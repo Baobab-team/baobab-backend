@@ -1,20 +1,49 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.utils import timezone
 
 
 class BaseModel(models.Model):
-    id = models.AutoField()
+    class Meta:
+        abstract = True
+
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last modification")
+    created_at = models.DateTimeField(auto_now=False, default=timezone.now)
+    deleted_at = models.DateTimeField(null=True)
+
+    hard_delete = True
+
+    def delete(self, using=None, keep_parents=False):
+        if self.hard_delete:
+            super().delete(using, keep_parents)
+        else:
+            self.deleted_at = timezone.now()
 
 
 class Category(BaseModel):
+    class Meta:
+        verbose_name_plural = "categories"
+
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Tag(BaseModel):
+    class Meta:
+        verbose_name_plural = "tags"
+    hard_delete = False
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Business(BaseModel):
+    class Meta:
+        verbose_name_plural = "social links"
+
     STATUS = [
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
@@ -27,29 +56,42 @@ class Business(BaseModel):
     website = models.URLField()
     email = models.EmailField()
     notes = models.CharField(max_length=300)
-    status = models.CharField(max_length=150, choices=STATUS)
-    accepted_at = models.DateField()
+    status = models.CharField(max_length=150, choices=STATUS,default=STATUS[0][0])
+    accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag)
+
+    def __str__(self):
+        return self.name
 
 
 class Phone(BaseModel):
+    class Meta:
+        verbose_name_plural = "social links"
+
     PHONE_TYPES = [
         ('tel', 'Telephone'),
         ('fax', 'Fax'),
     ]
     phone_regex = RegexValidator(regex=r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-](\d{3})[\s.-](\d{4})$',
                                  message="Format: '222 333 5555','222-333-5555','+1 222-333-5555'")  # TODO add Missing extension
-    telephone = models.CharField(max_length=200, validators=[phone_regex], blank=True)
-    type = models.CharField(choices=PHONE_TYPES)
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, )
+    number = models.CharField(max_length=200, validators=[phone_regex], blank=True)
+    type = models.CharField(choices=PHONE_TYPES, max_length=25)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.number
 
 
 class SocialLink(BaseModel):
+    class Meta:
+        verbose_name_plural = "social links"
+
     TYPES = [
         "linkedin",
         "facebook",
     ]
     link = models.URLField()
+    business = models.ForeignKey(Business, on_delete=models.CASCADE,null=True)
 
     @property
     def type(self):
@@ -57,6 +99,9 @@ class SocialLink(BaseModel):
         if link.lower() in (name.lower() for name in self.TYPES):
             return link.lower()
         return "unknown"
+
+    def __str__(self):
+        return self.link
 
 
 class OpeningHours(BaseModel):
@@ -71,13 +116,29 @@ class OpeningHours(BaseModel):
     ]
 
     day = models.IntegerField(choices=WEEKDAYS)
-    opening_time = models.TimeField()
+    opening_time = models.TimeField(max_length=100)
     closing_time = models.TimeField()
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, )
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ('weekday', 'from_hour')
-        unique_together = ('weekday', 'from_hour', 'to_hour')
+        ordering = ('day', 'opening_time')
+        unique_together = ('day', 'opening_time', 'opening_time')
+        verbose_name_plural = "opening hours"
 
-    def __unicode__(self):
-        return f"{getattr(self, 'day')} :{self.opening_time}  {self.closing_time}"
+    def __str__(self):
+        return f"{getattr(self, 'day')} :{self.opening_time}  {self.opening_time}"
+
+
+class Address(BaseModel):
+    class Meta:
+        verbose_name_plural = "addresses"
+
+    business = models.OneToOneField(Business, on_delete=models.CASCADE, primary_key=True)
+    app_office_number = models.CharField(blank=True, help_text="App/Office number",max_length=10)
+    street_number = models.SmallIntegerField()
+    street_type = models.CharField(max_length=30)
+    street_name = models.CharField(max_length=200)
+    direction = models.CharField(max_length=10, blank=True)
+    city = models.CharField(max_length=200, default="Montreal")
+    province = models.CharField(max_length=100, default="QC")
+    postal_code = models.CharField(max_length=200)
