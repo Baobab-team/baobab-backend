@@ -63,6 +63,15 @@ class Business(BaseModel):
     def __str__(self):
         return self.name
 
+phone_exemples = [
+    "+1-514-111-1111",
+    "514-111-1111",
+    "+1 514 111 1111",
+    "514-111-1111",
+    "514 111 1111",
+    "111-1111",
+    "111 1111"
+]
 
 class Phone(BaseModel):
     class Meta:
@@ -72,10 +81,11 @@ class Phone(BaseModel):
         ('tel', 'Telephone'),
         ('fax', 'Fax'),
     ]
-    phone_regex = RegexValidator(regex=r'^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-](\d{3})[\s.-](\d{4})$',
-                                 message="Format: '222 333 5555','222-333-5555','+1 222-333-5555'")  # TODO add Missing extension
-    number = models.CharField(max_length=200, validators=[phone_regex], blank=True)
+    phone_regex = RegexValidator(regex=r'(\+\d{1})?((\-|\s)\d{3})?((\-|\s)\d{3})((\-|\s)\d{4})$',
+                                 message="Format: '{}'".format(",".join(phone_exemples)))  # TODO add Missing extension
+    number = models.CharField(max_length=200, validators=[phone_regex], )
     type = models.CharField(choices=PHONE_TYPES, max_length=25)
+    extension = models.IntegerField(blank=True, default=None)
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
 
     def __str__(self):
