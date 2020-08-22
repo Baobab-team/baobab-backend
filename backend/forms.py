@@ -12,7 +12,7 @@ class CategoryForm(ModelForm):
 class BusinessForm(ModelForm):
     class Meta:
         model = Business
-        exclude = ['updated_at', 'created_at', 'deleted_at']
+        exclude = ['updated_at', 'created_at', 'deleted_at','accepted_at']
 
 
 class TagForm(ModelForm):
