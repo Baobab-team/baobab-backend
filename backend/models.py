@@ -55,8 +55,8 @@ class Business(BaseModel):
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     notes = models.TextField(blank=True)
-    status = models.CharField(max_length=150, choices=STATUS,default=STATUS[0][0])
-    accepted_at = models.DateField()
+    status = models.CharField(max_length=150, choices=STATUS, default=STATUS[0][0])
+    accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag)
 
     def __str__(self):
