@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from backend.forms import BusinessForm, CategoryForm, TagForm
-from backend.models import Category, Business, Tag, OpeningHours, Address
+from backend.models import Category, Business, Tag, OpeningHour, Address, Phone, SocialLink
 
 
 @admin.register(Category)
@@ -12,11 +12,17 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
 
-class OpeningHoursInline(admin.StackedInline):
-    model = OpeningHours
+class OpeningHourInline(admin.StackedInline):
+    model = OpeningHour
     extra = 0
     exclude = ("created_at", "updated_at", "deleted_at",)
     ordering = ("day",)
+
+
+class PhoneInline(admin.TabularInline):
+    model = Phone
+    extra = 0
+    exclude = ("created_at", "updated_at", "deleted_at",)
 
 
 class AddressInline(admin.StackedInline):
@@ -24,12 +30,18 @@ class AddressInline(admin.StackedInline):
     exclude = ("created_at", "updated_at", "deleted_at",)
 
 
+class SocialLinkInline(admin.StackedInline):
+    model = SocialLink
+    exclude = ("created_at", "updated_at", "deleted_at",)
+    extra = 0
+
+
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
     model = Business
     form = BusinessForm
     list_display = ("name", "category", "accepted_at")
-    inlines = [OpeningHoursInline, AddressInline, ]
+    inlines = [PhoneInline, SocialLinkInline, OpeningHourInline, AddressInline, ]
 
 
 @admin.register(Tag)

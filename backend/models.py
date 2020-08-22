@@ -113,7 +113,7 @@ class SocialLink(BaseModel):
         return self.link
 
 
-class OpeningHours(BaseModel):
+class OpeningHour(BaseModel):
     WEEKDAYS = [
         (1, "Monday"),
         (2, "Tuesday"),
@@ -142,12 +142,25 @@ class Address(BaseModel):
     class Meta:
         verbose_name_plural = "addresses"
 
+    PROVINCES = [
+        ("qc", "Quebec"),
+        ("on", "Ontario"),
+        ("ns", "Nova Scotia"),
+        ("nb", "New Brunswick"),
+        ("pe", "Prince Edward Island"),
+        ("ab", "Alberta"),
+        ("nu", "Nunavut"),
+        ("sk", "Saskatchewan"),
+        ("bc", "British Columbia"),
+        ("nl", "Newfoundland and Labrador"),
+        ("mn", "Manitoba")
+    ]
     business = models.OneToOneField(Business, on_delete=models.CASCADE, primary_key=True)
-    app_office_number = models.CharField(blank=True, help_text="App/Office number",max_length=10)
+    app_office_number = models.CharField(blank=True, help_text="App/Office number", max_length=10)
     street_number = models.SmallIntegerField()
     street_type = models.CharField(max_length=30)
     street_name = models.CharField(max_length=200)
     direction = models.CharField(max_length=10, blank=True)
     city = models.CharField(max_length=200, default="Montreal")
-    province = models.CharField(max_length=100, default="QC")
+    province = models.CharField(max_length=100, choices=PROVINCES,default=PROVINCES[0][0])
     postal_code = models.CharField(max_length=200)
