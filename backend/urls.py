@@ -4,11 +4,11 @@ from rest_framework import routers
 from .views import UserViewSet
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+router.register(r"users", UserViewSet)
 
 urlpatterns = [
-    # path('', views.index, name='index'),
-    path('api/', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-
+    path("api/", include(router.urls)),
+    path(
+        "api-auth/", include("rest_framework.urls", namespace="rest_framework")
+    ),
 ]
