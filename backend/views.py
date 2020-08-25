@@ -1,8 +1,12 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
-from backend.serializers import UserSerializer
+from backend.models import Category, Business
+from backend.serializers import (
+    UserSerializer,
+    CategorySerializer,
+    BusinessSerializer,
+)
 from users.models import CustomUser
 
 
@@ -10,7 +14,18 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-# ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = []  # TODO add permissions
+
+
+class BusinessViewSet(viewsets.ModelViewSet):
+    queryset = Business.objects.all()
+    serializer_class = BusinessSerializer
+    permission_classes = []  # TODO add permissions
