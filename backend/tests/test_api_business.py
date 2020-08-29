@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework.utils import json
 
 from users.models import CustomUser
-from ..models import Business, Category
+from ..models import Business, Category, Tag
 from ..serializers import BusinessSerializer
 
 
@@ -18,9 +18,11 @@ class TestBusinessEndpoint(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         self.category = Category.objects.create(name="Restaurant")
+        self.tag = Tag.objects.create(name="africain")
         self.business = Business.objects.create(
             name="gracia afrika", category=self.category
         )
+        self.business.tags.add(self.tag)
 
     def test_get_all(self):
         response = self.client.get(self.url)
@@ -42,7 +44,7 @@ class TestBusinessEndpoint(APITestCase):
                 "email": "",
                 "slogan": "",
                 "status": "pending",
-                "tags": [],
+                "tags": [{"id": 1, "name": "africain"}],
                 "website": "",
             },
         )
@@ -67,9 +69,32 @@ class TestBusinessEndpoint(APITestCase):
                 "email": "",
                 "slogan": "",
                 "status": "pending",
-                "tags": [],
+                "tags": [{"id": 1, "name": "africain"}],
                 "website": "",
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual("jojo", Business.objects.get(name="jojo").name)
+
+    def test_search(self):
+        url = reverse("business-list")
+        query_param = "name__icontains=gra"
+        full_url = f"{url}?{query_param}"
+        response = self.client.get(full_url, format="json",)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content),
+            [
+                {
+                    "category": {"id": 1, "name": "Restaurant"},
+                    "name": "gracia afrika",
+                    "description": "",
+                    "email": "",
+                    "slogan": "",
+                    "status": "pending",
+                    "tags": [{"id": 1, "name": "africain"}],
+                    "website": "",
+                }
+            ],
+        )

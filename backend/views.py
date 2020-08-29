@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+from url_filter.integrations.drf import DjangoFilterBackend
 
 from backend.models import Category, Business
 from backend.serializers import (
@@ -29,3 +30,5 @@ class BusinessViewSet(viewsets.ModelViewSet):
     queryset = Business.objects.all()
     serializer_class = BusinessSerializer
     permission_classes = []  # TODO add permissions
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ["name", "tags"]
