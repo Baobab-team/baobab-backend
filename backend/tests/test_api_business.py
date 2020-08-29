@@ -19,10 +19,15 @@ class TestBusinessEndpoint(APITestCase):
 
         self.category = Category.objects.create(name="Restaurant")
         self.tag = Tag.objects.create(name="africain")
+        self.tag2 = Tag.objects.create(name="tag2")
         self.business = Business.objects.create(
             name="gracia afrika", category=self.category
         )
+        self.business2 = Business.objects.create(
+            name="restaurant2", category=self.category
+        )
         self.business.tags.add(self.tag)
+        self.business2.tags.add(self.tag2)
 
     def test_get_all(self):
         response = self.client.get(self.url)
@@ -39,6 +44,7 @@ class TestBusinessEndpoint(APITestCase):
             json.loads(response.content),
             {
                 "category": {"id": 1, "name": "Restaurant"},
+                "id": 1,
                 "name": "gracia afrika",
                 "description": "",
                 "email": "",
@@ -57,6 +63,7 @@ class TestBusinessEndpoint(APITestCase):
                 "id": 1,
                 "name": "jojo",
                 "category": {"id": 1, "name": "Restaurant"},
+                "tags": {"id": 2, "name": "tag2"},
             },
             format="json",
         )
@@ -64,6 +71,7 @@ class TestBusinessEndpoint(APITestCase):
             json.loads(response.content),
             {
                 "category": {"id": 1, "name": "Restaurant"},
+                "id": 1,
                 "name": "jojo",
                 "description": "",
                 "email": "",
@@ -76,9 +84,9 @@ class TestBusinessEndpoint(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual("jojo", Business.objects.get(name="jojo").name)
 
-    def test_search(self):
+    def test_get_with_filter(self):
         url = reverse("business-list")
-        query_param = "name__icontains=gra"
+        query_param = "name__icontains=res"
         full_url = f"{url}?{query_param}"
         response = self.client.get(full_url, format="json",)
 
@@ -88,12 +96,37 @@ class TestBusinessEndpoint(APITestCase):
             [
                 {
                     "category": {"id": 1, "name": "Restaurant"},
-                    "name": "gracia afrika",
+                    "id": 2,
+                    "name": "restaurant2",
                     "description": "",
                     "email": "",
                     "slogan": "",
                     "status": "pending",
-                    "tags": [{"id": 1, "name": "africain"}],
+                    "tags": [{"id": 2, "name": "tag2"}],
+                    "website": "",
+                },
+            ],
+        )
+
+    def test_get_with_filter2(self):
+        url = reverse("business-list")
+        query_param = "tags__name__icontains=tag2"
+        full_url = f"{url}?{query_param}"
+        response = self.client.get(full_url, format="json",)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            json.loads(response.content),
+            [
+                {
+                    "category": {"id": 1, "name": "Restaurant"},
+                    "id": 2,
+                    "name": "restaurant2",
+                    "description": "",
+                    "email": "",
+                    "slogan": "",
+                    "status": "pending",
+                    "tags": [{"id": 2, "name": "tag2"}],
                     "website": "",
                 }
             ],
