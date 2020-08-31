@@ -23,16 +23,14 @@ class TestCategoryEndpoint(APITestCase):
         response = self.client.get(self.url)
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data["results"], serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_detail(self):
         response = self.client.get(
             reverse("category-detail", kwargs={"pk": 1})
         )
-        self.assertEqual(
-            json.loads(response.content), {"id": 1, "name": "Restaurant"}
-        )
+        self.assertEqual(response.data, {"id": 1, "name": "Restaurant"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_put(self):

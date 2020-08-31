@@ -23,7 +23,7 @@ class TestCategoryEndpoint(APITestCase):
         response = self.client.get(self.url)
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data["results"], serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_detail(self):
