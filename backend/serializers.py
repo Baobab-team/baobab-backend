@@ -25,6 +25,7 @@ class TagSerializer(serializers.ModelSerializer):
 class BusinessSerializer(serializers.ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
+    deleted_at = serializers.DateField(read_only=True)
 
     class Meta:
         model = Business
@@ -38,4 +39,5 @@ class BusinessSerializer(serializers.ModelSerializer):
             "email",
             "status",
             "tags",
+            "deleted_at",
         ]

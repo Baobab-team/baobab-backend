@@ -33,6 +33,15 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
 
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = []  # TODO add permissions
+    pagination_class = DefaultPagination
+    ordering_fields = ["id", "name"]
+    ordering = ["name"]
+
+
 class BusinessViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     permission_classes = []  # TODO add permissions
@@ -43,16 +52,34 @@ class BusinessViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
     def get_queryset(self):
-        exclude_deleted = self.request.query_params.get(
-            "exclude_deleted", False
-        )
+        exclude_deleted = self.request.query_params.get("deleted_at", False)
         self.queryset = Business.objects.all()
 
         if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
         return self.queryset
 
-    @action(detail=True, methods=["POST", "DELETE"])
+    @action(detail=True, methods=["PATCH"])
+    def update_status(self, request, pk=None):
+        business = self.get_object()
+        new_status = request.query_params.get("status", None)
+
+        if new_status:
+            business.update_status(new_status)
+            serializer = self.get_serializer(Business, partial=True)
+            if serializer.is_valid():
+                business.save()
+                return Response(serializer.data)
+            return Response(
+                {"message": "Provide valid status"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            {"message": "Provide valid status"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @action(detail=True, methods=["PUT", "DELETE"])
     def tags(self, request, pk=None):
         business = self.get_object()
         serializer = TagSerializer(data=request.data)

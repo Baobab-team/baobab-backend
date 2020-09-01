@@ -62,13 +62,16 @@ class Business(BaseModel):
     email = models.EmailField(blank=True)
     notes = models.TextField(blank=True)
     status = models.CharField(
-        max_length=150, choices=STATUS, default=STATUS[0][0]
+        max_length=25, choices=STATUS, default=STATUS[0][0]
     )
     accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.name
+
+    def update_status(self, new_status):
+        self.status = new_status
 
 
 phone_exemples = [
