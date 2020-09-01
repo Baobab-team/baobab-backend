@@ -1,11 +1,10 @@
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APITestCase, APIRequestFactory
+from rest_framework.test import APITestCase
 
 from users.models import CustomUser
 from ..models import Business, Category, Tag
 from ..serializers import BusinessSerializer
-from ..views import BusinessViewSet
 
 
 class TestBusinessEndpoint(APITestCase):
@@ -53,6 +52,7 @@ class TestBusinessEndpoint(APITestCase):
                 "status": "pending",
                 "tags": [{"id": 1, "name": "africain"}],
                 "website": "",
+                "deleted_at": None,
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -80,6 +80,7 @@ class TestBusinessEndpoint(APITestCase):
                 "status": "pending",
                 "tags": [{"id": 1, "name": "africain"}],
                 "website": "",
+                "deleted_at": None,
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -105,6 +106,7 @@ class TestBusinessEndpoint(APITestCase):
                     "status": "pending",
                     "tags": [{"id": 2, "name": "tag2"}],
                     "website": "",
+                    "deleted_at": None,
                 },
             ],
         )
@@ -128,6 +130,7 @@ class TestBusinessEndpoint(APITestCase):
                     "status": "pending",
                     "tags": [{"id": 2, "name": "tag2"}],
                     "website": "",
+                    "deleted_at": None,
                 }
             ],
         )
