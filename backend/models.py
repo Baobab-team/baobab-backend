@@ -65,7 +65,7 @@ class Business(BaseModel):
         max_length=25, choices=STATUS, default=STATUS[0][0]
     )
     accepted_at = models.DateField(null=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return self.name
