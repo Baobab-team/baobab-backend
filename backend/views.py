@@ -35,6 +35,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = []  # TODO add permissions
+    pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -42,6 +43,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = DefaultPagination
     permission_classes = []  # TODO add permissions
     ordering_fields = ["id", "name"]
     ordering = ["name"]
