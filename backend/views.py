@@ -1,6 +1,11 @@
+import logging
+
+import textdistance
+from django.db.models import Q
 from django.http import HttpResponse
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from url_filter.integrations.drf import DjangoFilterBackend
 
@@ -13,6 +18,8 @@ from backend.serializers import (
     TagSerializer,
 )
 from users.models import CustomUser
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -28,7 +35,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = []  # TODO add permissions
-    pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -37,7 +43,6 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = []  # TODO add permissions
-    pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -45,56 +50,134 @@ class TagViewSet(viewsets.ModelViewSet):
 class BusinessViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     permission_classes = []  # TODO add permissions
-    filter_backends = [DjangoFilterBackend]
-    filter_fields = ["name", "tags"]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ["name", "tags__name"]
+    filterset_fields = ["status", "accepted_at"]
     pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
     def get_queryset(self):
-        exclude_deleted = self.request.query_params.get("deleted_at", False)
+        deleted = self.request.query_params.get("deleted", False)
+        accepted = self.request.query_params.get("accepted", False)
         self.queryset = Business.objects.all()
 
-        if exclude_deleted:
+        if deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
+        if accepted:
+            self.queryset = self.queryset.filter(status="accepted")
         return self.queryset
 
     @action(detail=True, methods=["PATCH"])
     def update_status(self, request, pk=None):
         business = self.get_object()
-        new_status = request.query_params.get("status", None)
+        new_status = request.data.get("status", None)
 
         if new_status:
             business.update_status(new_status)
-            serializer = self.get_serializer(Business, partial=True)
+            serializer = self.get_serializer(
+                business, {"status": new_status}, partial=True
+            )
             if serializer.is_valid():
                 business.save()
                 return Response(serializer.data)
             return Response(
-                {"message": "Provide valid status"},
-                status=status.HTTP_400_BAD_REQUEST,
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
-            {"message": "Provide valid status"},
+            {"message": "Please provide a status"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     @action(detail=True, methods=["PUT", "DELETE"])
     def tags(self, request, pk=None):
         business = self.get_object()
-        serializer = TagSerializer(data=request.data)
-        if serializer.is_valid():
-            tag = serializer.save()
-            if request.method == "POST":
-                business.save()
-                tag.save()
-                business.tags.add(tag)
-            elif request.method == "DELETE":
-                business.tags.remove(tag)
-            business.save()
-            serializer = TagSerializer(business.tags, many=True)
-            return Response(serializer.data)
-        else:
+        tag_names = request.data.get("names", [])
+        tags_id = request.data.get("ids", [])
+        if not tag_names and not tags_id:
             return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                {
+                    "message": "Please provide a list of valid tags id or tags name"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
+        if tag_names:
+            tag_names = tag_names.split(",")
+        else:
+            tags_id = tags_id.split(",")
+        tags = Tag.objects.filter(Q(name__in=tag_names) | Q(pk__in=tags_id))
+
+        if request.method == "PUT":
+            for tag in tags:
+                business.tags.add(tag)
+        elif request.method == "DELETE":
+            for tag in tags:
+                business.tags.remove(tag)
+        business.save()
+        serializer = TagSerializer(business.tags, many=True)
+        return Response(serializer.data)
+
+
+class BusinessAutoCompleteView(ListAPIView):
+    permission_classes = []  # TODO add permissions
+
+    def get_queryset(self):
+        deleted = self.request.query_params.get("deleted_at", False)
+        self.queryset = Business.objects.all()
+
+        if deleted:
+            self.queryset = self.queryset.exclude(deleted_at__isnull=False)
+        return self.queryset
+
+    def list(self, request, *args, **kwargs):
+        query_search = request.query_params.get("search", None)
+        distance = request.query_params.get("distance", 0.35)
+        limit = request.query_params.get("limit", 10)
+        deleted = request.query_params.get("deleted", True)
+
+        if query_search is None:
+            response = Response(
+                {"message": "Missing query search parameter"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+            return response
+
+        full_business_list = self.get_queryset()
+        search_matching_business_list = Business.objects.filter(
+            Q(name__contains=query_search)
+            | Q(tags__name__contains=query_search)
+        )
+        if deleted:
+            search_matching_business_list = search_matching_business_list.exclude(
+                deleted_at__isnull=False
+            )
+
+        matching_words = set([])
+        for b in full_business_list:
+            keyword = query_search.lower()
+            matching_name = (
+                textdistance.levenshtein.normalized_distance(
+                    b.name.lower(), keyword
+                )
+                < distance
+            )
+
+            if matching_name:
+                matching_words.add(b.name)
+
+            for tag in b.tags.all():
+                matching_tag = (
+                    textdistance.levenshtein.normalized_distance(
+                        tag.name.lower(), keyword
+                    )
+                    < distance
+                )
+                if matching_tag:
+                    matching_words.add(tag.name)
+
+        for b in search_matching_business_list:
+            matching_words.add(b.name)
+
+        matching_words = list(matching_words)[0:limit]
+        response = Response(matching_words, status=status.HTTP_200_OK)
+        return response

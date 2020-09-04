@@ -2,7 +2,15 @@ from django.contrib import admin
 
 # Register your models here.
 from backend.forms import BusinessForm, CategoryForm, TagForm
-from backend.models import Category, Business, Tag, OpeningHour, Address, Phone, SocialLink
+from backend.models import (
+    Category,
+    Business,
+    Tag,
+    OpeningHour,
+    Address,
+    Phone,
+    SocialLink,
+)
 
 
 @admin.register(Category)
@@ -15,24 +23,40 @@ class CategoryAdmin(admin.ModelAdmin):
 class OpeningHourInline(admin.StackedInline):
     model = OpeningHour
     extra = 0
-    exclude = ("created_at", "updated_at", "deleted_at",)
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
     ordering = ("day",)
 
 
 class PhoneInline(admin.TabularInline):
     model = Phone
     extra = 0
-    exclude = ("created_at", "updated_at", "deleted_at",)
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
 
 
 class AddressInline(admin.StackedInline):
     model = Address
-    exclude = ("created_at", "updated_at", "deleted_at",)
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
 
 
 class SocialLinkInline(admin.StackedInline):
     model = SocialLink
-    exclude = ("created_at", "updated_at", "deleted_at",)
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
     extra = 0
 
 
@@ -40,8 +64,20 @@ class SocialLinkInline(admin.StackedInline):
 class BusinessAdmin(admin.ModelAdmin):
     model = Business
     form = BusinessForm
-    list_display = ("name", "category", "accepted_at")
-    inlines = [PhoneInline, SocialLinkInline, OpeningHourInline, AddressInline, ]
+    list_display = (
+        "name",
+        "category",
+        "accepted_at",
+        "status",
+        "website",
+    )
+    readonly_fields = ("deleted_at",)
+    inlines = [
+        PhoneInline,
+        SocialLinkInline,
+        OpeningHourInline,
+        AddressInline,
+    ]
 
 
 @admin.register(Tag)

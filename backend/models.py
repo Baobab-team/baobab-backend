@@ -1,6 +1,10 @@
+import logging
+
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 
 class BaseModel(models.Model):
@@ -20,6 +24,7 @@ class BaseModel(models.Model):
             super().delete(using, keep_parents)
         else:
             self.deleted_at = timezone.now()
+            self.save()
 
 
 class Category(BaseModel):
@@ -36,7 +41,7 @@ class Tag(BaseModel):
     class Meta:
         verbose_name_plural = "tags"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -55,7 +60,7 @@ class Business(BaseModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
     description = models.CharField(max_length=300, blank=True)
     website = models.URLField(blank=True)

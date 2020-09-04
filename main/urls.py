@@ -36,7 +36,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path("", include("backend.urls")),
+    path("api/v1/", include("backend.urls")),
     path("admin/", admin.site.urls),
     # path(
     #     "swagger(?P<format>\.json|\.yaml)",
