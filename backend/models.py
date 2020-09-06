@@ -104,8 +104,10 @@ class Phone(BaseModel):
     )  # TODO add Missing extension
     number = models.CharField(max_length=200, validators=[phone_regex],)
     type = models.CharField(choices=PHONE_TYPES, max_length=25)
-    extension = models.IntegerField(blank=True, default=None)
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    extension = models.IntegerField(blank=True, null=True)
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name="phones"
+    )
 
     def __str__(self):
         return self.number
@@ -120,7 +122,12 @@ class SocialLink(BaseModel):
         "facebook",
     ]
     link = models.URLField()
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, null=True)
+    business = models.ForeignKey(
+        Business,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="social_links",
+    )
 
     @property
     def type(self):
@@ -147,7 +154,9 @@ class OpeningHour(BaseModel):
     day = models.IntegerField(choices=WEEKDAYS)
     opening_time = models.TimeField(max_length=100)
     closing_time = models.TimeField()
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name="opening_hours"
+    )
 
     class Meta:
         ordering = ("day", "opening_time")
@@ -177,14 +186,14 @@ class Address(BaseModel):
         ("nl", "Newfoundland and Labrador"),
         ("mn", "Manitoba"),
     ]
-    business = models.OneToOneField(
-        Business, on_delete=models.CASCADE, primary_key=True
+    business = models.ForeignKey(
+        Business, on_delete=models.CASCADE, related_name="addresses"
     )
     app_office_number = models.CharField(
         blank=True, help_text="App/Office number", max_length=10
     )
     street_number = models.SmallIntegerField()
-    street_type = models.CharField(max_length=30)
+    street_type = models.CharField(max_length=30, blank=True)
     street_name = models.CharField(max_length=200)
     direction = models.CharField(max_length=10, blank=True)
     city = models.CharField(max_length=200, default="Montreal")

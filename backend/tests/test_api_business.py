@@ -1,3 +1,4 @@
+from datetime import datetime
 from json import loads, dumps
 
 from rest_framework import status
@@ -6,12 +7,22 @@ from rest_framework.test import APITestCase
 
 from main.utils import reverse_querystring
 from users.models import CustomUser
-from ..models import Business, Category, Tag, BaseModel
+from ..models import (
+    Business,
+    Category,
+    Tag,
+    BaseModel,
+    SocialLink,
+    Phone,
+    Address,
+    OpeningHour,
+)
 from ..serializers import BusinessSerializer
 
 
 class TestBusinessEndpoint(APITestCase):
     url = reverse("business-list")
+    maxDiff = None
 
     def setUp(self):
         self.user = CustomUser.objects.create_user(
@@ -28,9 +39,31 @@ class TestBusinessEndpoint(APITestCase):
         self.business2 = Business.objects.create(
             name="restaurant2", category=self.category
         )
+        self.business3 = Business.objects.create(
+            name="business3", category=self.category
+        )
         self.business.tags.add(self.tag)
+        # self.business.social_link.add(self.social_links)
         self.business.save()
         self.business2.tags.add(self.tag2)
+        self.phone1 = Phone.objects.create(
+            number="514-555-5555", type="tel", business=self.business3
+        )
+        self.social_link1 = SocialLink.objects.create(
+            link="www.facebook.com/moi", business=self.business3
+        )
+        self.address1 = Address.objects.create(
+            street_number="123",
+            street_name="Wall Street",
+            province="qc",
+            business=self.business3,
+        )
+        self.opening_hours = OpeningHour.objects.create(
+            business=self.business3,
+            day=1,
+            opening_time=datetime(2020, 1, 1, 10, 0, 0),
+            closing_time=datetime(2020, 1, 1, 17, 0, 0),
+        )
 
     def test_get_all(self):
         response = self.client.get(self.url)
@@ -42,27 +75,64 @@ class TestBusinessEndpoint(APITestCase):
     #
     def test_get_detail(self):
         response = self.client.get(
-            reverse("business-detail", kwargs={"pk": 1}), format="json"
+            reverse("business-detail", kwargs={"pk": 3}), format="json"
         )
         self.assertDictEqual(
             to_dict(response.data),
             {
-                "id": 1,
+                "id": 3,
                 "category": {"id": 1, "name": "Restaurant"},
-                "name": "gracia afrika",
+                "name": "business3",
                 "description": "",
                 "email": "",
                 "slogan": "",
                 "status": "pending",
-                "tags": [{"id": 1, "name": "africain"}],
+                "tags": [],
                 "website": "",
                 "deleted_at": None,
                 "accepted_at": None,
+                "phones": [
+                    {
+                        "extension": None,
+                        "id": 1,
+                        "number": "514-555-5555",
+                        "type": "tel",
+                    }
+                ],
+                "addresses": [
+                    {
+                        "app_office_number": "",
+                        "city": "Montreal",
+                        "direction": "",
+                        "id": 1,
+                        "postal_code": "",
+                        "province": "qc",
+                        "street_name": "Wall Street",
+                        "street_number": 123,
+                        "street_type": "",
+                    }
+                ],
+                "opening_hours": [
+                    {
+                        "closing_time": "17:00:00",
+                        "day": 1,
+                        "id": 1,
+                        "opening_time": "10:00:00",
+                    }
+                ],
+                "social_links": [
+                    {
+                        "id": 1,
+                        "link": "www.facebook.com/moi",
+                        "type": "unknown",
+                    }
+                ],
             },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #
+        #
+
     def test_put(self):
         response = self.client.put(
             reverse("business-detail", kwargs={"pk": 1}),
@@ -85,6 +155,10 @@ class TestBusinessEndpoint(APITestCase):
                 "slogan": "",
                 "status": "pending",
                 "tags": [{"id": 1, "name": "africain"}],
+                "addresses": [],
+                "phones": [],
+                "social_links": [],
+                "opening_hours": [],
                 "website": "",
                 "deleted_at": None,
                 "accepted_at": None,
@@ -113,6 +187,10 @@ class TestBusinessEndpoint(APITestCase):
                     "slogan": "",
                     "status": "pending",
                     "tags": [{"id": 2, "name": "tag2"}],
+                    "phones": [],
+                    "addresses": [],
+                    "social_links": [],
+                    "opening_hours": [],
                     "website": "",
                     "deleted_at": None,
                     "accepted_at": None,
