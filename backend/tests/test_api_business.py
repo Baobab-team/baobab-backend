@@ -1,7 +1,8 @@
+from json import loads, dumps
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
-from json import loads, dumps
 
 from main.utils import reverse_querystring
 from users.models import CustomUser
@@ -136,6 +137,13 @@ class TestBusinessEndpoint(APITestCase):
         self.assertEqual(
             to_dict(response.data), [],
         )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_autocomplete(self):
+        response = self.client.get(
+            reverse_querystring("business-autocomplete"), {"search": "re"}
+        )
+        self.assertEqual(to_dict(response.data), ["restaurant2"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

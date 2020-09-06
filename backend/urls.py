@@ -19,7 +19,11 @@ router.register(
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("business/autocomplete", BusinessAutoCompleteView.as_view()),
+    path(
+        "business/autocomplete",
+        BusinessAutoCompleteView.as_view(),
+        name="business-autocomplete",
+    ),
     path(
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
     ),
