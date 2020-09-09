@@ -43,6 +43,7 @@ class PhoneInline(admin.TabularInline):
 
 class AddressInline(admin.StackedInline):
     model = Address
+    extra = 0
     exclude = (
         "created_at",
         "updated_at",
@@ -52,12 +53,12 @@ class AddressInline(admin.StackedInline):
 
 class SocialLinkInline(admin.StackedInline):
     model = SocialLink
+    extra = 0
     exclude = (
         "created_at",
         "updated_at",
         "deleted_at",
     )
-    extra = 0
 
 
 @admin.register(Business)
@@ -71,7 +72,7 @@ class BusinessAdmin(admin.ModelAdmin):
         "status",
         "website",
     )
-    readonly_fields = ("deleted_at",)
+    readonly_fields = ("deleted_at", "accepted_at")
     inlines = [
         PhoneInline,
         SocialLinkInline,

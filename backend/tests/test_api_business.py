@@ -34,16 +34,15 @@ class TestBusinessEndpoint(APITestCase):
         self.tag = Tag.objects.create(name="africain")
         self.tag2 = Tag.objects.create(name="tag2")
         self.business = Business.objects.create(
-            name="gracia afrika", category=self.category
+            name="gracia afrika", category=self.category, status="accepted"
         )
         self.business2 = Business.objects.create(
-            name="restaurant2", category=self.category
+            name="restaurant2", category=self.category, status="accepted"
         )
         self.business3 = Business.objects.create(
-            name="business3", category=self.category
+            name="business3", category=self.category, status="accepted"
         )
         self.business.tags.add(self.tag)
-        # self.business.social_link.add(self.social_links)
         self.business.save()
         self.business2.tags.add(self.tag2)
         self.phone1 = Phone.objects.create(
@@ -86,7 +85,7 @@ class TestBusinessEndpoint(APITestCase):
                 "description": "",
                 "email": "",
                 "slogan": "",
-                "status": "pending",
+                "status": "accepted",
                 "tags": [],
                 "website": "",
                 "deleted_at": None,
@@ -153,7 +152,7 @@ class TestBusinessEndpoint(APITestCase):
                 "description": "",
                 "email": "",
                 "slogan": "",
-                "status": "pending",
+                "status": "accepted",
                 "tags": [{"id": 1, "name": "africain"}],
                 "addresses": [],
                 "phones": [],
@@ -185,7 +184,7 @@ class TestBusinessEndpoint(APITestCase):
                     "description": "",
                     "email": "",
                     "slogan": "",
-                    "status": "pending",
+                    "status": "accepted",
                     "tags": [{"id": 2, "name": "tag2"}],
                     "phones": [],
                     "addresses": [],

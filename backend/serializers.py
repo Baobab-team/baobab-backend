@@ -64,7 +64,7 @@ class BusinessSerializer(serializers.ModelSerializer):
     opening_hours = OpeningHourSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
     deleted_at = serializers.DateTimeField(read_only=True)
-    accepted_at = serializers.DateTimeField(read_only=True)
+    accepted_at = serializers.DateField(read_only=True)
 
     class Meta:
         model = Business
@@ -79,7 +79,6 @@ class BusinessSerializer(serializers.ModelSerializer):
             "status",
             "tags",
             "phones",
-            "addresses",
             "addresses",
             "social_links",
             "opening_hours",

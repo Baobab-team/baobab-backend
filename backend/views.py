@@ -35,7 +35,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = []  # TODO add permissions
-    pagination_class = DefaultPagination
+    # pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -60,13 +60,15 @@ class BusinessViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
     def get_queryset(self):
-        deleted = self.request.query_params.get("deleted", False)
-        accepted = self.request.query_params.get("accepted", False)
+        exclude_deleted = self.request.query_params.get(
+            "exclude_deleted", False
+        )
+        status = self.request.query_params.get("status", None)
         self.queryset = Business.objects.all()
 
-        if deleted:
+        if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
-        if accepted:
+        if status is None:
             self.queryset = self.queryset.filter(status="accepted")
         return self.queryset
 
@@ -124,20 +126,24 @@ class BusinessAutoCompleteView(ListAPIView):
     permission_classes = []  # TODO add permissions
 
     def get_queryset(self):
-        deleted = self.request.query_params.get("deleted_at", False)
+        exclude_deleted = self.request.query_params.get(
+            "exclude_deleted", False
+        )
+        status = self.request.query_params.get("status", None)
         self.queryset = Business.objects.all()
 
-        if deleted:
+        if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
+        if status is None:
+            self.queryset = self.queryset.filter(status="accepted")
         return self.queryset
 
     def list(self, request, *args, **kwargs):
-        query_search = request.query_params.get("search", None)
+        search = request.query_params.get("search", None)
         distance = request.query_params.get("distance", 0.35)
         limit = request.query_params.get("limit", 10)
-        deleted = request.query_params.get("deleted", True)
 
-        if query_search is None:
+        if search is None:
             response = Response(
                 {"message": "Missing query search parameter"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -145,18 +151,13 @@ class BusinessAutoCompleteView(ListAPIView):
             return response
 
         full_business_list = self.get_queryset()
-        search_matching_business_list = Business.objects.filter(
-            Q(name__contains=query_search)
-            | Q(tags__name__contains=query_search)
+        search_matching_business_list = self.get_queryset().filter(
+            Q(name__contains=search) | Q(tags__name__contains=search)
         )
-        if deleted:
-            search_matching_business_list = search_matching_business_list.exclude(
-                deleted_at__isnull=False
-            )
 
         matching_words = set([])
         for b in full_business_list:
-            keyword = query_search.lower()
+            keyword = search.lower()
             matching_name = (
                 textdistance.levenshtein.normalized_distance(
                     b.name.lower(), keyword

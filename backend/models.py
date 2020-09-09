@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from django.core.validators import RegexValidator
 from django.db import models
@@ -23,7 +24,7 @@ class BaseModel(models.Model):
         if self.hard_delete:
             super().delete(using, keep_parents)
         else:
-            self.deleted_at = timezone.now()
+            self.deleted_at = timezone.now
             self.save()
 
 
@@ -77,6 +78,10 @@ class Business(BaseModel):
 
     def update_status(self, new_status):
         self.status = new_status
+
+    def clean(self):
+        if self.status == "accepted":
+            self.accepted_at = date.today()
 
 
 phone_exemples = [
