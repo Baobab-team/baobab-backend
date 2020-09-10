@@ -57,7 +57,7 @@ class TestBusinessEndpoint(APITestCase):
             province="qc",
             business=self.business3,
         )
-        self.opening_hours = OpeningHour.objects.create(
+        self.business_hours = OpeningHour.objects.create(
             business=self.business3,
             day=1,
             opening_time=datetime(2020, 1, 1, 10, 0, 0),
@@ -111,7 +111,7 @@ class TestBusinessEndpoint(APITestCase):
                         "street_type": "",
                     }
                 ],
-                "opening_hours": [
+                "business_hours": [
                     {
                         "closing_time": "17:00:00",
                         "day": 1,
@@ -157,7 +157,7 @@ class TestBusinessEndpoint(APITestCase):
                 "addresses": [],
                 "phones": [],
                 "social_links": [],
-                "opening_hours": [],
+                "business_hours": [],
                 "website": "",
                 "deleted_at": None,
                 "accepted_at": None,
@@ -169,7 +169,7 @@ class TestBusinessEndpoint(APITestCase):
     #
     def test_search(self):
         url = reverse_querystring(
-            "business-list", query_kwargs={"search": "res"}
+            "business-list", query_kwargs={"querySearch": "res"}
         )
         response = self.client.get(url, format="json",)
 
@@ -189,7 +189,7 @@ class TestBusinessEndpoint(APITestCase):
                     "phones": [],
                     "addresses": [],
                     "social_links": [],
-                    "opening_hours": [],
+                    "business_hours": [],
                     "website": "",
                     "deleted_at": None,
                     "accepted_at": None,
@@ -218,7 +218,7 @@ class TestBusinessEndpoint(APITestCase):
 
     def test_autocomplete(self):
         response = self.client.get(
-            reverse_querystring("business-autocomplete"), {"search": "re"}
+            reverse_querystring("business-autocomplete"), {"querySearch": "re"}
         )
         self.assertEqual(to_dict(response.data), ["restaurant2"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)

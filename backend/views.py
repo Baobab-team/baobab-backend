@@ -61,7 +61,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         exclude_deleted = self.request.query_params.get(
-            "exclude_deleted", False
+            "exclude_deleted", None
         )
         status = self.request.query_params.get("status", None)
         self.queryset = Business.objects.all()
@@ -139,7 +139,7 @@ class BusinessAutoCompleteView(ListAPIView):
         return self.queryset
 
     def list(self, request, *args, **kwargs):
-        search = request.query_params.get("search", None)
+        search = request.query_params.get("querySearch", None)
         distance = request.query_params.get("distance", 0.35)
         limit = request.query_params.get("limit", 10)
 

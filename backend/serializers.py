@@ -61,7 +61,9 @@ class BusinessSerializer(serializers.ModelSerializer):
     phones = PhoneSerializer(read_only=True, many=True)
     social_links = SocialLinkSerializer(read_only=True, many=True)
     addresses = AddressSerializer(read_only=True, many=True)
-    opening_hours = OpeningHourSerializer(read_only=True, many=True)
+    business_hours = OpeningHourSerializer(
+        read_only=True, many=True, source="opening_hours"
+    )
     category = CategorySerializer(read_only=True)
     deleted_at = serializers.DateTimeField(read_only=True)
     accepted_at = serializers.DateField(read_only=True)
@@ -81,7 +83,7 @@ class BusinessSerializer(serializers.ModelSerializer):
             "phones",
             "addresses",
             "social_links",
-            "opening_hours",
+            "business_hours",
             "deleted_at",
             "accepted_at",
         ]
