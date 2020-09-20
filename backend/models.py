@@ -1,5 +1,6 @@
 import logging
 from datetime import date
+from django.core.exceptions import ValidationError
 
 from django.core.validators import RegexValidator
 from django.db import models
@@ -48,6 +49,23 @@ class Tag(BaseModel):
         return self.name
 
 
+class PaymentType(BaseModel):
+    TYPES = [
+        ("credit", "Credit"),
+        ("debit", "Debit"),
+        ("cash", "Cash"),
+        ("crypto", "Crypto"),
+    ]
+
+    class Meta:
+        verbose_name_plural = "payment types"
+
+    name = models.CharField(max_length=100, unique=True, choices=TYPES)
+
+    def __str__(self):
+        return self.name
+
+
 class Business(BaseModel):
     class Meta:
         verbose_name_plural = "businesses"
@@ -63,7 +81,7 @@ class Business(BaseModel):
     )
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
-    description = models.CharField(max_length=300, blank=True)
+    description = models.TextField(max_length=300, blank=True)
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     notes = models.TextField(blank=True)
@@ -72,6 +90,7 @@ class Business(BaseModel):
     )
     accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    payment_types = models.ManyToManyField(PaymentType, blank=True)
 
     def __str__(self):
         return self.name
@@ -137,8 +156,9 @@ class SocialLink(BaseModel):
     @property
     def type(self):
         link = getattr(self, "link")
-        if link.lower() in (name.lower() for name in self.TYPES):
-            return link.lower()
+        for i, name in enumerate(self.TYPES):
+            if name.lower() in link.lower():
+                return name
         return "unknown"
 
     def __str__(self):

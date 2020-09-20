@@ -8,6 +8,7 @@ from backend.models import (
     Address,
     SocialLink,
     OpeningHour,
+    PaymentType,
 )
 from users.models import CustomUser
 
@@ -27,6 +28,12 @@ class CategorySerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
+        fields = ["id", "name"]
+
+
+class PaymentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentType
         fields = ["id", "name"]
 
 
@@ -58,6 +65,7 @@ class OpeningHourSerializer(serializers.ModelSerializer):
 
 class BusinessSerializer(serializers.ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
+    payment_types = serializers.StringRelatedField(read_only=True, many=True)
     phones = PhoneSerializer(read_only=True, many=True)
     social_links = SocialLinkSerializer(read_only=True, many=True)
     addresses = AddressSerializer(read_only=True, many=True)
@@ -86,4 +94,7 @@ class BusinessSerializer(serializers.ModelSerializer):
             "business_hours",
             "deleted_at",
             "accepted_at",
+            "created_at",
+            "updated_at",
+            "payment_types",
         ]

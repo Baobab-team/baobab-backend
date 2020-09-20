@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from backend.forms import BusinessForm, CategoryForm, TagForm
+from backend.forms import BusinessForm, CategoryForm, TagForm, PaymentTypeForm
 from backend.models import (
     Category,
     Business,
@@ -10,6 +10,7 @@ from backend.models import (
     Address,
     Phone,
     SocialLink,
+    PaymentType,
 )
 
 
@@ -85,4 +86,11 @@ class BusinessAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     model = Tag
     form = TagForm
+    list_display = ("name",)
+
+
+@admin.register(PaymentType)
+class PaymentTypeAdmin(admin.ModelAdmin):
+    model = PaymentType
+    form = PaymentTypeForm
     list_display = ("name",)
