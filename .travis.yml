@@ -5,6 +5,5 @@ python:
 install:
   - pip install -r requirements.txt
 env:
-  - SECRET_KEY=secret
-  - DJANGO_SETTINGS_MODULE=main.settings.dev
+  - SECRET_KEY=secret, DJANGO_SETTINGS_MODULE=main.settings.dev
 script: python manage.py test
