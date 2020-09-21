@@ -1,6 +1,7 @@
 from datetime import datetime
 from json import loads, dumps
 
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
@@ -33,14 +34,27 @@ class TestBusinessEndpoint(APITestCase):
         self.category = Category.objects.create(name="Restaurant")
         self.tag = Tag.objects.create(name="africain")
         self.tag2 = Tag.objects.create(name="tag2")
+        self.now = timezone.now()
         self.business = Business.objects.create(
-            name="gracia afrika", category=self.category, status="accepted"
+            name="gracia afrika",
+            category=self.category,
+            status="accepted",
+            created_at=self.now,
+            updated_at=self.now,
         )
         self.business2 = Business.objects.create(
-            name="restaurant2", category=self.category, status="accepted"
+            name="restaurant2",
+            category=self.category,
+            status="accepted",
+            created_at=self.now,
+            updated_at=self.now,
         )
         self.business3 = Business.objects.create(
-            name="business3", category=self.category, status="accepted"
+            name="business3",
+            category=self.category,
+            status="accepted",
+            created_at=self.now,
+            updated_at=self.now,
         )
         self.business.tags.add(self.tag)
         self.business.save()
@@ -71,13 +85,11 @@ class TestBusinessEndpoint(APITestCase):
         self.assertEqual(response.data["results"], serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #
     def test_get_detail(self):
         response = self.client.get(
             reverse("business-detail", kwargs={"pk": 3}), format="json"
         )
-        self.assertDictEqual(
-            to_dict(response.data),
+        self.assertDictContainsSubset(
             {
                 "id": 3,
                 "category": {"id": 1, "name": "Restaurant"},
@@ -123,14 +135,14 @@ class TestBusinessEndpoint(APITestCase):
                     {
                         "id": 1,
                         "link": "www.facebook.com/moi",
-                        "type": "unknown",
+                        "type": "facebook",
                     }
                 ],
+                "payment_types": [],
             },
+            to_dict(response.data),
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        #
 
     def test_put(self):
         response = self.client.put(
@@ -143,8 +155,7 @@ class TestBusinessEndpoint(APITestCase):
             },
             format="json",
         )
-        self.assertDictEqual(
-            to_dict(response.data),
+        self.assertDictContainsSubset(
             {
                 "category": {"id": 1, "name": "Restaurant"},
                 "id": 1,
@@ -161,7 +172,9 @@ class TestBusinessEndpoint(APITestCase):
                 "website": "",
                 "deleted_at": None,
                 "accepted_at": None,
+                "payment_types": [],
             },
+            to_dict(response.data),
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual("jojo", Business.objects.get(name="jojo").name)
@@ -174,27 +187,26 @@ class TestBusinessEndpoint(APITestCase):
         response = self.client.get(url, format="json",)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            to_dict(response.data["results"]),
-            [
-                {
-                    "category": {"id": 1, "name": "Restaurant"},
-                    "id": 2,
-                    "name": "restaurant2",
-                    "description": "",
-                    "email": "",
-                    "slogan": "",
-                    "status": "accepted",
-                    "tags": [{"id": 2, "name": "tag2"}],
-                    "phones": [],
-                    "addresses": [],
-                    "social_links": [],
-                    "business_hours": [],
-                    "website": "",
-                    "deleted_at": None,
-                    "accepted_at": None,
-                },
-            ],
+        self.assertDictContainsSubset(
+            {
+                "category": {"id": 1, "name": "Restaurant"},
+                "id": 2,
+                "name": "restaurant2",
+                "description": "",
+                "email": "",
+                "slogan": "",
+                "status": "accepted",
+                "tags": [{"id": 2, "name": "tag2"}],
+                "phones": [],
+                "addresses": [],
+                "social_links": [],
+                "business_hours": [],
+                "website": "",
+                "deleted_at": None,
+                "accepted_at": None,
+                "payment_types": [],
+            },
+            to_dict(response.data["results"][0]),
         )
 
     def test_tags_put(self):
