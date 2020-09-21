@@ -5,5 +5,5 @@ python:
 install:
   - pip install -r requirements.txt
 env:
-  - SECRET_KEY=secret
+  - SECRET_KEY="secret"
 script: python manage.py test
