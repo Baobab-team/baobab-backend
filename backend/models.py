@@ -185,7 +185,6 @@ class OpeningHour(BaseModel):
 
     class Meta:
         ordering = ("day", "opening_time")
-        unique_together = ("day", "opening_time", "opening_time")
         verbose_name_plural = "opening hours"
 
     def __str__(self):
