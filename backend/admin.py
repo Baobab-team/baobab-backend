@@ -72,14 +72,19 @@ class BusinessAdmin(admin.ModelAdmin):
         "accepted_at",
         "status",
         "website",
+        "last_updated_by",
     )
-    readonly_fields = ("deleted_at", "accepted_at")
+    readonly_fields = ("deleted_at", "accepted_at", "last_updated_by")
     inlines = [
         PhoneInline,
         SocialLinkInline,
         OpeningHourInline,
         AddressInline,
     ]
+
+    def save_model(self, request, obj, form, change):
+        obj.last_updated_by = request.user
+        obj.save()
 
 
 @admin.register(Tag)

@@ -5,6 +5,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 
+from users.models import CustomUser
+
 logger = logging.getLogger(__name__)
 
 
@@ -90,6 +92,9 @@ class Business(BaseModel):
     accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag, blank=True)
     payment_types = models.ManyToManyField(PaymentType, blank=True)
+    last_updated_by = models.ForeignKey(
+        CustomUser, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.name
