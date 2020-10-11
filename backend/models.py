@@ -81,7 +81,7 @@ class Business(BaseModel):
     )
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
-    description = models.TextField(max_length=300, blank=True)
+    description = models.TextField(blank=True)
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     notes = models.TextField(blank=True)
