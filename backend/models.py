@@ -1,6 +1,5 @@
 import logging
 from datetime import date
-from django.core.exceptions import ValidationError
 
 from django.core.validators import RegexValidator
 from django.db import models
@@ -183,20 +182,21 @@ class OpeningHour(BaseModel):
     ]
 
     day = models.IntegerField(choices=WEEKDAYS)
-    opening_time = models.TimeField(max_length=100)
-    closing_time = models.TimeField()
+    opening_time = models.TimeField(null=True, blank=True)
+    closing_time = models.TimeField(null=True, blank=True)
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="opening_hours"
     )
+    closed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("day", "opening_time")
         verbose_name_plural = "opening hours"
 
     def __str__(self):
-        return (
-            f"{getattr(self, 'day')} :{self.opening_time}  {self.opening_time}"
-        )
+        if self.closed:
+            return f"{self.get_day_display()}: CLOSED"
+        return f"{self.get_day_display()} :{self.opening_time}  {self.closing_time}"
 
 
 class Address(BaseModel):
