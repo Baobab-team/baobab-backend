@@ -182,7 +182,7 @@ class OpeningHour(BaseModel):
     ]
 
     day = models.IntegerField(choices=WEEKDAYS)
-    opening_time = models.TimeField(max_length=100, null=True, blank=True)
+    opening_time = models.TimeField(null=True, blank=True)
     closing_time = models.TimeField(null=True, blank=True)
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="opening_hours"
@@ -194,6 +194,8 @@ class OpeningHour(BaseModel):
         verbose_name_plural = "opening hours"
 
     def __str__(self):
+        if self.closed:
+            f"{getattr(self, 'day')}: CLOSED"
         return (
             f"{getattr(self, 'day')} :{self.opening_time}  {self.closing_time}"
         )
