@@ -144,6 +144,12 @@ class SocialLink(BaseModel):
     TYPES = [
         "linkedin",
         "facebook",
+        "linktr",
+        "twitter",
+        "instagram",
+        "linkedin",
+        "tiktok",
+        "youtube",
     ]
     link = models.URLField()
     business = models.ForeignKey(
