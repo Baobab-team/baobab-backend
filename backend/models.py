@@ -195,7 +195,7 @@ class OpeningHour(BaseModel):
 
     def __str__(self):
         if self.closed:
-            f"{getattr(self, 'day')}: CLOSED"
+            return f"{getattr(self, 'day')}: CLOSED"
         return (
             f"{getattr(self, 'day')} :{self.opening_time}  {self.closing_time}"
         )
