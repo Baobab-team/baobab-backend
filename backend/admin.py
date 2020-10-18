@@ -52,6 +52,16 @@ class TagInline(admin.TabularInline):
     )
 
 
+class PaymentTypeInline(admin.TabularInline):
+    model = Business.payment_types.through
+    extra = 0
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+
+
 class AddressInline(admin.StackedInline):
     model = Address
     extra = 0
@@ -87,6 +97,7 @@ class BusinessAdmin(admin.ModelAdmin):
     readonly_fields = ("deleted_at", "accepted_at", "last_updated_by")
     inlines = [
         PhoneInline,
+        PaymentTypeInline,
         TagInline,
         SocialLinkInline,
         OpeningHourInline,
