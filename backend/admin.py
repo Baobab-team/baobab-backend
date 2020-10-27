@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
+from modeltranslation.admin import TranslationAdmin
+
 from backend.forms import BusinessForm, CategoryForm, TagForm, PaymentTypeForm
 from backend.models import (
     Category,
@@ -83,7 +85,7 @@ class SocialLinkInline(admin.StackedInline):
 
 
 @admin.register(Business)
-class BusinessAdmin(admin.ModelAdmin):
+class BusinessAdmin(TranslationAdmin):
     model = Business
     form = BusinessForm
     list_display = (
