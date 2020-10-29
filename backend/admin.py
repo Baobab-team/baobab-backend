@@ -96,7 +96,12 @@ class BusinessAdmin(TranslationAdmin):
         "website",
         "last_updated_by",
     )
-    readonly_fields = ("deleted_at", "accepted_at", "last_updated_by")
+    readonly_fields = (
+        "deleted_at",
+        "created_at",
+        "accepted_at",
+        "last_updated_by",
+    )
     inlines = [
         PhoneInline,
         PaymentTypeInline,
