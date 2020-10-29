@@ -22,10 +22,6 @@ from users.models import CustomUser
 logger = logging.getLogger(__name__)
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
