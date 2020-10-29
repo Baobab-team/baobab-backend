@@ -129,6 +129,7 @@ class TestBusinessEndpoint(APITestCase):
                         "day": 1,
                         "id": 1,
                         "opening_time": "10:00:00",
+                        "closed": False,
                     }
                 ],
                 "social_links": [

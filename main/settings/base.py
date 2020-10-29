@@ -33,6 +33,7 @@ APPEND_SLASH = True
 
 INSTALLED_APPS = [
     "backend.apps.BackendConfig",
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -114,6 +115,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
 
 LANGUAGE_CODE = "en-us"
 LANGUAGES = (

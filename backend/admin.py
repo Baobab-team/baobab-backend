@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
+from modeltranslation.admin import TranslationAdmin
+
 from backend.forms import BusinessForm, CategoryForm, TagForm, PaymentTypeForm
 from backend.models import (
     Category,
@@ -42,6 +44,26 @@ class PhoneInline(admin.TabularInline):
     )
 
 
+class TagInline(admin.TabularInline):
+    model = Business.tags.through
+    extra = 0
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+
+
+class PaymentTypeInline(admin.TabularInline):
+    model = Business.payment_types.through
+    extra = 0
+    exclude = (
+        "created_at",
+        "updated_at",
+        "deleted_at",
+    )
+
+
 class AddressInline(admin.StackedInline):
     model = Address
     extra = 0
@@ -63,7 +85,7 @@ class SocialLinkInline(admin.StackedInline):
 
 
 @admin.register(Business)
-class BusinessAdmin(admin.ModelAdmin):
+class BusinessAdmin(TranslationAdmin):
     model = Business
     form = BusinessForm
     list_display = (
@@ -72,14 +94,21 @@ class BusinessAdmin(admin.ModelAdmin):
         "accepted_at",
         "status",
         "website",
+        "last_updated_by",
     )
-    readonly_fields = ("deleted_at", "accepted_at")
+    readonly_fields = ("deleted_at", "accepted_at", "last_updated_by")
     inlines = [
         PhoneInline,
+        PaymentTypeInline,
+        TagInline,
         SocialLinkInline,
         OpeningHourInline,
         AddressInline,
     ]
+
+    def save_model(self, request, obj, form, change):
+        obj.last_updated_by = request.user
+        obj.save()
 
 
 @admin.register(Tag)

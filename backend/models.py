@@ -1,10 +1,12 @@
 import logging
 from datetime import date
-from django.core.exceptions import ValidationError
 
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext as _
+
+from users.models import CustomUser
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +16,7 @@ class BaseModel(models.Model):
         abstract = True
 
     updated_at = models.DateTimeField(
-        auto_now=True, verbose_name="Last modification"
+        auto_now=True, verbose_name=_("Last modification")
     )
     created_at = models.DateTimeField(auto_now=False, default=timezone.now)
     deleted_at = models.DateTimeField(null=True)
@@ -51,10 +53,10 @@ class Tag(BaseModel):
 
 class PaymentType(BaseModel):
     TYPES = [
-        ("credit", "Credit"),
-        ("debit", "Debit"),
-        ("cash", "Cash"),
-        ("crypto", "Crypto"),
+        ("credit", _("Credit")),
+        ("debit", _("Debit")),
+        ("cash", _("Cash")),
+        ("crypto", _("Crypto")),
     ]
 
     class Meta:
@@ -72,16 +74,16 @@ class Business(BaseModel):
 
     hard_delete = False
     STATUS = [
-        ("pending", "Pending"),
-        ("accepted", "Accepted"),
-        ("refused", "Refused"),
+        ("pending", _("Pending")),
+        ("accepted", _("Accepted")),
+        ("refused", _("Refused")),
     ]
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True
     )
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
-    description = models.TextField(max_length=300, blank=True)
+    description = models.TextField(blank=True)
     website = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     notes = models.TextField(blank=True)
@@ -91,6 +93,9 @@ class Business(BaseModel):
     accepted_at = models.DateField(null=True)
     tags = models.ManyToManyField(Tag, blank=True)
     payment_types = models.ManyToManyField(PaymentType, blank=True)
+    last_updated_by = models.ForeignKey(
+        CustomUser, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.name
@@ -119,8 +124,8 @@ class Phone(BaseModel):
         verbose_name_plural = "phones"
 
     PHONE_TYPES = [
-        ("tel", "Telephone"),
-        ("fax", "Fax"),
+        ("tel", _("Telephone")),
+        ("fax", _("Fax")),
     ]
     phone_regex = RegexValidator(
         regex=r"(\+\d{1})?((\-|\s)\d{3})?((\-|\s)\d{3})((\-|\s)\d{4})$",
@@ -144,6 +149,12 @@ class SocialLink(BaseModel):
     TYPES = [
         "linkedin",
         "facebook",
+        "linktr",
+        "twitter",
+        "instagram",
+        "linkedin",
+        "tiktok",
+        "youtube",
     ]
     link = models.URLField()
     business = models.ForeignKey(
@@ -167,30 +178,31 @@ class SocialLink(BaseModel):
 
 class OpeningHour(BaseModel):
     WEEKDAYS = [
-        (1, "Monday"),
-        (2, "Tuesday"),
-        (3, "Wednesday"),
-        (4, "Thursday"),
-        (5, "Friday"),
-        (6, "Saturday"),
-        (7, "Sunday"),
+        (1, _("Monday")),
+        (2, _("Tuesday")),
+        (3, _("Wednesday")),
+        (4, _("Thursday")),
+        (5, _("Friday")),
+        (6, _("Saturday")),
+        (7, _("Sunday")),
     ]
 
     day = models.IntegerField(choices=WEEKDAYS)
-    opening_time = models.TimeField(max_length=100)
-    closing_time = models.TimeField()
+    opening_time = models.TimeField(null=True, blank=True)
+    closing_time = models.TimeField(null=True, blank=True)
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="opening_hours"
     )
+    closed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("day", "opening_time")
         verbose_name_plural = "opening hours"
 
     def __str__(self):
-        return (
-            f"{getattr(self, 'day')} :{self.opening_time}  {self.opening_time}"
-        )
+        if self.closed:
+            return f"{self.get_day_display()}: CLOSED"
+        return f"{self.get_day_display()} :{self.opening_time}  {self.closing_time}"
 
 
 class Address(BaseModel):
@@ -198,23 +210,23 @@ class Address(BaseModel):
         verbose_name_plural = "addresses"
 
     PROVINCES = [
-        ("qc", "Quebec"),
-        ("on", "Ontario"),
-        ("ns", "Nova Scotia"),
-        ("nb", "New Brunswick"),
-        ("pe", "Prince Edward Island"),
-        ("ab", "Alberta"),
-        ("nu", "Nunavut"),
-        ("sk", "Saskatchewan"),
-        ("bc", "British Columbia"),
-        ("nl", "Newfoundland and Labrador"),
-        ("mn", "Manitoba"),
+        ("qc", _("Quebec")),
+        ("on", _("Ontario")),
+        ("ns", _("Nova Scotia")),
+        ("nb", _("New Brunswick")),
+        ("pe", _("Prince Edward Island")),
+        ("ab", _("Alberta")),
+        ("nu", _("Nunavut")),
+        ("sk", _("Saskatchewan")),
+        ("bc", _("British Columbia")),
+        ("nl", _("Newfoundland and Labrador")),
+        ("mn", _("Manitoba")),
     ]
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, related_name="addresses"
     )
     app_office_number = models.CharField(
-        blank=True, help_text="App/Office number", max_length=10
+        blank=True, help_text=_("App/Office number"), max_length=10
     )
     street_number = models.SmallIntegerField()
     street_type = models.CharField(max_length=30, blank=True)
