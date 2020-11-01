@@ -4,6 +4,7 @@ from rest_framework import routers
 from .views import (
     UserViewSet,
     CategoryViewSet,
+    CategoryWithSubViewSet,
     BusinessViewSet,
     BusinessAutoCompleteView,
     TagViewSet,
@@ -23,6 +24,11 @@ urlpatterns = [
         "businesses/autocomplete",
         BusinessAutoCompleteView.as_view(),
         name="business-autocomplete",
+    ),
+    path(
+        "categories/with-subs",
+        CategoryWithSubViewSet.as_view(),
+        name="categories-with-subs",
     ),
     path(
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
