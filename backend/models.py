@@ -1,6 +1,7 @@
 import logging
 from datetime import date
 
+from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
@@ -32,13 +33,41 @@ class BaseModel(models.Model):
 
 
 class Category(BaseModel):
+    MAX_LEVEL = 3
+
     class Meta:
         verbose_name_plural = "categories"
 
     name = models.CharField(max_length=100)
+    parent = models.ForeignKey(
+        "self",
+        blank=True,
+        null=True,
+        related_name="children",
+        on_delete=models.SET_NULL,
+    )
 
     def __str__(self):
-        return self.name
+        full_path = self.get_tree()
+        return ">".join(full_path[::-1])
+
+    def get_tree(self):
+        tree = [self.name]
+        k = self.parent
+        while k is not None:
+            tree.append(k.name)
+            k = k.parent
+        return tree
+
+    def clean(self):
+        if len(self.get_tree()) > self.MAX_LEVEL:
+            raise ValidationError(
+                {
+                    "parent": _(
+                        f"There can only be {self.MAX_LEVEL} levels of categories"
+                    )
+                }
+            )
 
 
 class Tag(BaseModel):

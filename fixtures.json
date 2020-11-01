@@ -1,0 +1,217 @@
+[
+{
+    "model": "backend.category",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-09-24T23:18:08.160Z",
+        "created_at": "2020-09-23T00:21:04.579Z",
+        "deleted_at": null,
+        "name": "category muhaha"
+    }
+},
+{
+    "model": "backend.category",
+    "pk": 2,
+    "fields": {
+        "updated_at": "2020-09-24T23:18:08.107Z",
+        "created_at": "2020-09-24T23:18:08.105Z",
+        "deleted_at": null,
+        "name": "category Xdd1"
+    }
+},
+{
+    "model": "backend.tag",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-09-23T00:21:31.635Z",
+        "created_at": "2020-09-23T00:21:31.632Z",
+        "deleted_at": null,
+        "name": "tag1"
+    }
+},
+{
+    "model": "backend.tag",
+    "pk": 2,
+    "fields": {
+        "updated_at": "2020-09-23T00:21:37.910Z",
+        "created_at": "2020-09-23T00:21:37.909Z",
+        "deleted_at": null,
+        "name": "lol"
+    }
+},
+{
+    "model": "backend.tag",
+    "pk": 3,
+    "fields": {
+        "updated_at": "2020-09-23T00:21:42.459Z",
+        "created_at": "2020-09-23T00:21:42.458Z",
+        "deleted_at": null,
+        "name": "mmm"
+    }
+},
+{
+    "model": "backend.tag",
+    "pk": 4,
+    "fields": {
+        "updated_at": "2020-09-23T00:21:49.353Z",
+        "created_at": "2020-09-23T00:21:49.352Z",
+        "deleted_at": null,
+        "name": "ccc"
+    }
+},
+{
+    "model": "backend.tag",
+    "pk": 5,
+    "fields": {
+        "updated_at": "2020-10-14T01:31:17.982Z",
+        "created_at": "2020-10-14T01:31:17.979Z",
+        "deleted_at": null,
+        "name": "ANOTHER NEW TAG NIGA"
+    }
+},
+{
+    "model": "backend.paymenttype",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-10-18T20:40:33.131Z",
+        "created_at": "2020-10-18T20:40:33.128Z",
+        "deleted_at": null,
+        "name": "debit"
+    }
+},
+{
+    "model": "backend.paymenttype",
+    "pk": 2,
+    "fields": {
+        "updated_at": "2020-10-18T20:40:47.975Z",
+        "created_at": "2020-10-18T20:40:47.974Z",
+        "deleted_at": null,
+        "name": "crypto"
+    }
+},
+{
+    "model": "backend.business",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-10-23T01:15:46.530Z",
+        "created_at": "2020-09-23T00:21:52Z",
+        "deleted_at": null,
+        "category": 1,
+        "name": "name1",
+        "slogan": "",
+        "slogan_en": null,
+        "slogan_fr": null,
+        "description": "",
+        "description_en": "",
+        "description_fr": "",
+        "website": "",
+        "email": "john.doe2@email.com",
+        "notes": "sadsa",
+        "status": "accepted",
+        "accepted_at": "2020-10-22",
+        "last_updated_by": 1,
+        "tags": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ],
+        "payment_types": []
+    }
+},
+{
+    "model": "backend.business",
+    "pk": 2,
+    "fields": {
+        "updated_at": "2020-10-18T20:40:53.975Z",
+        "created_at": "2020-09-24T01:14:50.430Z",
+        "deleted_at": null,
+        "category": 1,
+        "name": "busyy ness",
+        "slogan": "",
+        "slogan_en": null,
+        "slogan_fr": null,
+        "description": "",
+        "description_en": null,
+        "description_fr": null,
+        "website": "https://maisonducari.com/",
+        "email": "sylvain.degue@gmail.com",
+        "notes": "nm",
+        "status": "accepted",
+        "accepted_at": "2020-10-18",
+        "last_updated_by": 1,
+        "tags": [
+            3
+        ],
+        "payment_types": [
+            1,
+            2
+        ]
+    }
+},
+{
+    "model": "backend.business",
+    "pk": 3,
+    "fields": {
+        "updated_at": "2020-10-14T01:35:14.330Z",
+        "created_at": "2020-10-14T01:35:14.307Z",
+        "deleted_at": null,
+        "category": 2,
+        "name": "Kambucha",
+        "slogan": "",
+        "slogan_en": null,
+        "slogan_fr": null,
+        "description": "",
+        "description_en": null,
+        "description_fr": null,
+        "website": "",
+        "email": "",
+        "notes": "",
+        "status": "accepted",
+        "accepted_at": "2020-10-13",
+        "last_updated_by": 1,
+        "tags": [],
+        "payment_types": []
+    }
+},
+{
+    "model": "backend.sociallink",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-10-11T01:01:53.390Z",
+        "created_at": "2020-10-11T01:01:53.297Z",
+        "deleted_at": null,
+        "link": "https://www.facebook.com/sylvain.degue.3/",
+        "business": 1
+    }
+},
+{
+    "model": "backend.openinghour",
+    "pk": 1,
+    "fields": {
+        "updated_at": "2020-10-11T04:45:10.841Z",
+        "created_at": "2020-10-11T01:40:08.911Z",
+        "deleted_at": null,
+        "day": 3,
+        "opening_time": "11:00:00",
+        "closing_time": "10:00:00",
+        "business": 2,
+        "closed": false
+    }
+},
+{
+    "model": "backend.openinghour",
+    "pk": 2,
+    "fields": {
+        "updated_at": "2020-10-11T03:58:14.538Z",
+        "created_at": "2020-10-11T03:58:14.504Z",
+        "deleted_at": null,
+        "day": 5,
+        "opening_time": null,
+        "closing_time": null,
+        "business": 2,
+        "closed": true
+    }
+}
+]
