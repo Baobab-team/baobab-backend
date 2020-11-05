@@ -19,10 +19,31 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["email"]
 
 
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["id", "name"]
+        fields = [
+            "id",
+            "name",
+        ]
+
+
+class CategoryWithSubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+            "children",
+        ]
+
+    children = RecursiveField(many=True)
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -14,6 +14,7 @@ from backend.pagination import DefaultPagination
 from backend.serializers import (
     UserSerializer,
     CategorySerializer,
+    CategoryWithSubSerializer,
     BusinessSerializer,
     TagSerializer,
 )
@@ -32,6 +33,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = []  # TODO add permissions
     # pagination_class = DefaultPagination
+    ordering_fields = ["id", "name"]
+    ordering = ["name"]
+
+
+class CategoryWithSubViewSet(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryWithSubSerializer
+    permission_classes = []  # TODO add permissions
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 

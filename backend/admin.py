@@ -20,7 +20,7 @@ from backend.models import (
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
     form = CategoryForm
-    list_display = ("name",)
+    list_display = ("name", "parent")
 
 
 class OpeningHourInline(admin.StackedInline):
@@ -92,6 +92,7 @@ class BusinessAdmin(TranslationAdmin):
         "name",
         "category",
         "accepted_at",
+        "created_at",
         "status",
         "website",
         "last_updated_by",
