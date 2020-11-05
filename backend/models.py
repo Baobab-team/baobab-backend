@@ -108,7 +108,7 @@ class Business(BaseModel):
         ("refused", _("Refused")),
     ]
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True
+        Category, on_delete=models.SET_NULL, null=True, blank=True
     )
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
