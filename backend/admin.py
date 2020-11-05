@@ -92,6 +92,7 @@ class BusinessAdmin(TranslationAdmin):
         "name",
         "category",
         "accepted_at",
+        "created_at",
         "status",
         "website",
         "last_updated_by",
