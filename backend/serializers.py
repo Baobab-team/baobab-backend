@@ -31,7 +31,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "children",
         ]
+
+    children = RecursiveField(many=True)
 
 
 class CategoryWithSubSerializer(serializers.ModelSerializer):
