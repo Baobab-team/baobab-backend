@@ -2,7 +2,6 @@ import logging
 
 import textdistance
 from django.db.models import Q
-from django.http import HttpResponse
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
@@ -31,8 +30,6 @@ class UserViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = []  # TODO add permissions
-    # pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -40,7 +37,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class CategoryWithSubViewSet(ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryWithSubSerializer
-    permission_classes = []  # TODO add permissions
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
@@ -49,14 +45,12 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = DefaultPagination
-    permission_classes = []  # TODO add permissions
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
 
 class BusinessViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
-    permission_classes = []  # TODO add permissions
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ["name", "tags__name"]
     filterset_fields = ["status", "accepted_at"]
@@ -128,8 +122,6 @@ class BusinessViewSet(viewsets.ModelViewSet):
 
 
 class BusinessAutoCompleteView(ListAPIView):
-    permission_classes = []  # TODO add permissions
-
     def get_queryset(self):
         exclude_deleted = self.request.query_params.get(
             "exclude_deleted", False
