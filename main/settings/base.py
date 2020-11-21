@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
+
 from django.utils.translation import ugettext_lazy as _
+from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
 
@@ -67,11 +68,12 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "SEARCH_PARAM": "querySearch",
 }
