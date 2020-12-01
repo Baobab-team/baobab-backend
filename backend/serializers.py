@@ -31,19 +31,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-        ]
-
-
-class CategoryWithSubSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = [
-            "id",
-            "name",
             "children",
         ]
 
-    children = RecursiveField(many=True)
+    children = RecursiveField(many=True, read_only=True)
 
 
 class TagSerializer(serializers.ModelSerializer):

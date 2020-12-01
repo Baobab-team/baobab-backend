@@ -30,7 +30,9 @@ class TestCategoryEndpoint(APITestCase):
         response = self.client.get(
             reverse("category-detail", kwargs={"pk": 1})
         )
-        self.assertEqual(response.data, {"id": 1, "name": "Restaurant"})
+        self.assertEqual(
+            response.data, {"id": 1, "name": "Restaurant", "children": []}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_put(self):
@@ -39,7 +41,8 @@ class TestCategoryEndpoint(APITestCase):
             {"id": 1, "name": "jojo"},
         )
         self.assertEqual(
-            json.loads(response.content), {"id": 1, "name": "jojo"}
+            json.loads(response.content),
+            {"id": 1, "name": "jojo", "children": []},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual("jojo", Category.objects.get(name="jojo").name)
