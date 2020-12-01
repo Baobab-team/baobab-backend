@@ -34,7 +34,7 @@ class CategorySerializer(serializers.ModelSerializer):
             "children",
         ]
 
-    children = RecursiveField(many=True)
+    children = RecursiveField(many=True, read_only=True)
 
 
 class CategoryWithSubSerializer(serializers.ModelSerializer):
@@ -46,7 +46,7 @@ class CategoryWithSubSerializer(serializers.ModelSerializer):
             "children",
         ]
 
-    children = RecursiveField(many=True)
+    children = RecursiveField(many=True, read_only=True)
 
 
 class TagSerializer(serializers.ModelSerializer):

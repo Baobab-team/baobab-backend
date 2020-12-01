@@ -13,7 +13,6 @@ from backend.pagination import DefaultPagination
 from backend.serializers import (
     UserSerializer,
     CategorySerializer,
-    CategoryWithSubSerializer,
     BusinessSerializer,
     TagSerializer,
 )
@@ -30,13 +29,6 @@ class UserViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    ordering_fields = ["id", "name"]
-    ordering = ["name"]
-
-
-class CategoryWithSubViewSet(ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategoryWithSubSerializer
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 

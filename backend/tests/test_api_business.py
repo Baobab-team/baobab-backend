@@ -92,7 +92,7 @@ class TestBusinessEndpoint(APITestCase):
         self.assertDictContainsSubset(
             {
                 "id": 3,
-                "category": {"id": 1, "name": "Restaurant"},
+                "category": {"id": 1, "name": "Restaurant", "children": []},
                 "name": "business3",
                 "description": "",
                 "email": "",
@@ -158,7 +158,7 @@ class TestBusinessEndpoint(APITestCase):
         )
         self.assertDictContainsSubset(
             {
-                "category": {"id": 1, "name": "Restaurant"},
+                "category": {"id": 1, "name": "Restaurant", "children": []},
                 "id": 1,
                 "name": "jojo",
                 "description": "",
@@ -190,7 +190,7 @@ class TestBusinessEndpoint(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictContainsSubset(
             {
-                "category": {"id": 1, "name": "Restaurant"},
+                "category": {"id": 1, "name": "Restaurant", "children": []},
                 "id": 2,
                 "name": "restaurant2",
                 "description": "",
