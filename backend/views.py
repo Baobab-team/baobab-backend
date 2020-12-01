@@ -13,7 +13,6 @@ from backend.pagination import DefaultPagination
 from backend.serializers import (
     UserSerializer,
     CategorySerializer,
-    CategoryWithSubSerializer,
     BusinessSerializer,
     TagSerializer,
 )
@@ -34,13 +33,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
 
-class CategoryWithSubViewSet(ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategoryWithSubSerializer
-    ordering_fields = ["id", "name"]
-    ordering = ["name"]
-
-
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -53,7 +45,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
     serializer_class = BusinessSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ["name", "tags__name"]
-    filterset_fields = ["status", "accepted_at"]
+    filterset_fields = ["status", "accepted_at", "category"]
     pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
@@ -63,12 +55,17 @@ class BusinessViewSet(viewsets.ModelViewSet):
             "exclude_deleted", None
         )
         status = self.request.query_params.get("status", None)
+        category = self.request.query_params.get("category", None)
         self.queryset = Business.objects.all()
 
         if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
         if status is None:
             self.queryset = self.queryset.filter(status="accepted")
+        if category:
+            self.queryset = self.queryset.filter(
+                category__name__iexact=category
+            )
         return self.queryset
 
     @action(detail=True, methods=["PATCH"])
