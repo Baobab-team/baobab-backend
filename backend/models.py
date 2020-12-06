@@ -1,6 +1,8 @@
 import logging
 from datetime import date
 
+from autoslug import AutoSlugField
+from autoslug.utils import slugify
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
@@ -38,6 +40,7 @@ class Category(BaseModel):
     class Meta:
         verbose_name_plural = "categories"
 
+    slug = models.SlugField()
     name = models.CharField(max_length=100)
     parent = models.ForeignKey(
         "self",
@@ -59,6 +62,16 @@ class Category(BaseModel):
             k = k.parent
         return tree
 
+    def get_children_ids(self):
+        ids = [self.id]
+        children = self.children.all()
+        for c in children:
+            if c.children:
+                ids = ids + c.get_children_ids()
+            else:
+                ids.append(c.id)
+        return ids
+
     def clean(self):
         if len(self.get_tree()) > self.MAX_LEVEL:
             raise ValidationError(
@@ -68,6 +81,10 @@ class Category(BaseModel):
                     )
                 }
             )
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
 
 
 class Tag(BaseModel):
@@ -110,6 +127,7 @@ class Business(BaseModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True
     )
+    slug = models.SlugField()
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
     description = models.TextField(blank=True)
@@ -135,6 +153,10 @@ class Business(BaseModel):
     def clean(self):
         if self.status == "accepted":
             self.accepted_at = date.today()
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Business, self).save(*args, **kwargs)
 
 
 phone_exemples = [
