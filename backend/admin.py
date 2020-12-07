@@ -20,7 +20,15 @@ from backend.models import (
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
     form = CategoryForm
-    list_display = ("id", "name", "parent")
+    list_display = ("id", "slug", "name", "parent")
+    readonly_fields = ("slug",)
+    actions = ["slugify"]
+
+    def slugify(self, request, queryset):
+        for c in queryset:
+            c.save()
+
+    slugify.short_description = "Slugify"
 
 
 class OpeningHourInline(admin.StackedInline):
@@ -91,6 +99,7 @@ class BusinessAdmin(TranslationAdmin):
     list_display = (
         "id",
         "name",
+        "slug",
         "category",
         "accepted_at",
         "created_at",
@@ -99,6 +108,7 @@ class BusinessAdmin(TranslationAdmin):
         "last_updated_by",
     )
     readonly_fields = (
+        "slug",
         "deleted_at",
         "created_at",
         "accepted_at",
@@ -112,6 +122,13 @@ class BusinessAdmin(TranslationAdmin):
         OpeningHourInline,
         AddressInline,
     ]
+    actions = ["slugify"]
+
+    def slugify(self, request, queryset):
+        for b in queryset:
+            b.save()
+
+    slugify.short_description = "Slugify"
 
     def save_model(self, request, obj, form, change):
         obj.last_updated_by = request.user
