@@ -1,7 +1,5 @@
 import logging
 from datetime import date
-
-from autoslug import AutoSlugField
 from autoslug.utils import slugify
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
