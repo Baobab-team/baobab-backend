@@ -1,7 +1,4 @@
 import logging
-import operator
-from functools import reduce
-
 import textdistance
 from django.db.models import Q
 from rest_framework import viewsets, status, filters, generics
