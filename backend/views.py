@@ -55,6 +55,14 @@ class CategoryListView(generics.ListAPIView):
     ordering_fields = ["id", "name"]
     ordering = ["name"]
 
+    def get_queryset(self):
+        self.queryset = Category.objects.all()
+
+        if self.request.query_params.get("only_root", False):
+            self.queryset = self.queryset.filter(parent__isnull=True)
+
+        return self.queryset
+
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
