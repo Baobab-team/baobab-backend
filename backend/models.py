@@ -38,7 +38,7 @@ class Category(BaseModel):
     class Meta:
         verbose_name_plural = "categories"
 
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=100)
     name = models.CharField(max_length=100)
     parent = models.ForeignKey(
         "self",
@@ -125,7 +125,7 @@ class Business(BaseModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True
     )
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=100)
     name = models.CharField(max_length=100, unique=True)
     slogan = models.CharField(max_length=150, blank=True)
     description = models.TextField(blank=True)
