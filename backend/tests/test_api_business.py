@@ -92,8 +92,14 @@ class TestBusinessEndpoint(APITestCase):
         self.assertDictContainsSubset(
             {
                 "id": 3,
-                "category": {"id": 1, "name": "Restaurant", "children": []},
+                "category": {
+                    "id": 1,
+                    "name": "Restaurant",
+                    "slug": "restaurant",
+                    "children": [],
+                },
                 "name": "business3",
+                "slug": "business3",
                 "description": "",
                 "email": "",
                 "slogan": "",
@@ -158,9 +164,15 @@ class TestBusinessEndpoint(APITestCase):
         )
         self.assertDictContainsSubset(
             {
-                "category": {"id": 1, "name": "Restaurant", "children": []},
+                "category": {
+                    "id": 1,
+                    "name": "Restaurant",
+                    "slug": "restaurant",
+                    "children": [],
+                },
                 "id": 1,
                 "name": "jojo",
+                "slug": "jojo",
                 "description": "",
                 "email": "",
                 "slogan": "",
@@ -190,9 +202,15 @@ class TestBusinessEndpoint(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictContainsSubset(
             {
-                "category": {"id": 1, "name": "Restaurant", "children": []},
+                "category": {
+                    "id": 1,
+                    "name": "Restaurant",
+                    "slug": "restaurant",
+                    "children": [],
+                },
                 "id": 2,
                 "name": "restaurant2",
+                "slug": "restaurant2",
                 "description": "",
                 "email": "",
                 "slogan": "",
@@ -209,32 +227,6 @@ class TestBusinessEndpoint(APITestCase):
             },
             to_dict(response.data["results"][0]),
         )
-
-    def test_tags_put(self):
-        response = self.client.put(
-            reverse_querystring("business-tags", args=["1"]), {"names": "tag2"}
-        )
-        self.assertEqual(
-            to_dict(response.data),
-            [{"id": 1, "name": "africain"}, {"id": 2, "name": "tag2"}],
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_tags_delete(self):
-        response = self.client.delete(
-            reverse_querystring("business-tags", args=["1"]), {"ids": "1,2"}
-        )
-        self.assertEqual(
-            to_dict(response.data), [],
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_autocomplete(self):
-        response = self.client.get(
-            reverse_querystring("business-autocomplete"), {"querySearch": "re"}
-        )
-        self.assertEqual(to_dict(response.data), ["restaurant2"])
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 def custom_serializer(obj):

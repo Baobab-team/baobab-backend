@@ -64,7 +64,7 @@ class TagViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
 
-class BusinessViewSet(viewsets.ModelViewSet):
+class BusinessListView(generics.ListAPIView):
     serializer_class = BusinessSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ["name", "tags__name"]
@@ -91,54 +91,11 @@ class BusinessViewSet(viewsets.ModelViewSet):
             )
         return self.queryset
 
-    @action(detail=True, methods=["PATCH"])
-    def update_status(self, request, pk=None):
-        business = self.get_object()
-        new_status = request.data.get("status", None)
 
-        if new_status:
-            business.update_status(new_status)
-            serializer = self.get_serializer(
-                business, {"status": new_status}, partial=True
-            )
-            if serializer.is_valid():
-                business.save()
-                return Response(serializer.data)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST,
-            )
-        return Response(
-            {"message": "Please provide a status"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-    @action(detail=True, methods=["PUT", "DELETE"])
-    def tags(self, request, pk=None):
-        business = self.get_object()
-        tag_names = request.data.get("names", [])
-        tags_id = request.data.get("ids", [])
-        if not tag_names and not tags_id:
-            return Response(
-                {
-                    "message": "Please provide a list of valid tags id or tags name"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if tag_names:
-            tag_names = tag_names.split(",")
-        else:
-            tags_id = tags_id.split(",")
-        tags = Tag.objects.filter(Q(name__in=tag_names) | Q(pk__in=tags_id))
-
-        if request.method == "PUT":
-            for tag in tags:
-                business.tags.add(tag)
-        elif request.method == "DELETE":
-            for tag in tags:
-                business.tags.remove(tag)
-        business.save()
-        serializer = TagSerializer(business.tags, many=True)
-        return Response(serializer.data)
+class BusinessView(MultipleFieldLookupMixin, generics.RetrieveUpdateAPIView):
+    queryset = Business.objects.all()
+    serializer_class = BusinessSerializer
+    lookup_fields = ["pk", "slug"]
 
 
 class BusinessAutoCompleteView(ListAPIView):
