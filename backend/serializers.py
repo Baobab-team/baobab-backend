@@ -31,9 +31,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "slug",
             "children",
         ]
 
+    slug = serializers.SlugField(read_only=True)
     children = RecursiveField(many=True, read_only=True)
 
 
@@ -87,6 +89,7 @@ class BusinessSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     deleted_at = serializers.DateTimeField(read_only=True)
     accepted_at = serializers.DateField(read_only=True)
+    slug = serializers.SlugField(read_only=True)
 
     class Meta:
         model = Business
@@ -94,6 +97,7 @@ class BusinessSerializer(serializers.ModelSerializer):
             "id",
             "category",
             "name",
+            "slug",
             "description",
             "slogan",
             "website",

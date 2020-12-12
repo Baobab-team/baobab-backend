@@ -18,6 +18,7 @@ class TestCategoryEndpoint(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         self.category = Category.objects.create(name="Restaurant")
+        self.category2 = Category.objects.create(name="sous-restaurant")
 
     def test_get_all(self):
         response = self.client.get(self.url)
@@ -26,13 +27,20 @@ class TestCategoryEndpoint(APITestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_get_only_root(self):
+        response = self.client.get(self.url + "?only_root=True")
+        categories = Category.objects.filter(parent__isnull=True).all()
+        serializer = CategorySerializer(categories, many=True)
+        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_get_detail(self):
         response = self.client.get(
             reverse("category-detail", kwargs={"pk": 1})
         )
-        self.assertEqual(
-            response.data, {"id": 1, "name": "Restaurant", "children": []}
-        )
+        category = Category.objects.get(pk=1)
+        serializer = CategorySerializer(category, many=False)
+        self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_put(self):
@@ -40,9 +48,8 @@ class TestCategoryEndpoint(APITestCase):
             reverse("category-detail", kwargs={"pk": 1}),
             {"id": 1, "name": "jojo"},
         )
-        self.assertEqual(
-            json.loads(response.content),
-            {"id": 1, "name": "jojo", "children": []},
-        )
+        category = Category.objects.get(pk=1)
+        serializer = CategorySerializer(category, many=False)
+        self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual("jojo", Category.objects.get(name="jojo").name)
+        self.assertEqual("jojo", category.name)

@@ -32,7 +32,12 @@ class TestCategoryEndpoint(APITestCase):
         )
         self.assertEqual(
             json.loads(response.content),
-            {"id": 1, "name": "Restaurant", "children": []},
+            {
+                "id": 1,
+                "name": "Restaurant",
+                "slug": "restaurant",
+                "children": [],
+            },
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -43,7 +48,7 @@ class TestCategoryEndpoint(APITestCase):
         )
         self.assertEqual(
             json.loads(response.content),
-            {"id": 1, "name": "jojo", "children": []},
+            {"id": 1, "name": "jojo", "slug": "jojo", "children": []},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual("jojo", Category.objects.get(name="jojo").name)
