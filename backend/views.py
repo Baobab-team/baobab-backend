@@ -2,7 +2,6 @@ import logging
 import textdistance
 from django.db.models import Q
 from rest_framework import viewsets, status, filters, generics
-from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.response import Response
 from url_filter.integrations.drf import DjangoFilterBackend
@@ -83,7 +82,7 @@ class BusinessListView(generics.ListAPIView):
 
     def get_queryset(self):
         exclude_deleted = self.request.query_params.get(
-            "exclude_deleted", None
+            "exclude_deleted", True
         )
         status = self.request.query_params.get("status", None)
         category = self.request.query_params.get("category", None)
@@ -94,9 +93,11 @@ class BusinessListView(generics.ListAPIView):
         if status is None:
             self.queryset = self.queryset.filter(status="accepted")
         if category:
-            self.queryset = self.queryset.filter(
-                category__name__iexact=category
-            )
+            category_obj = Category.objects.get(name=category)
+            if category_obj:
+                self.queryset = self.queryset.filter(
+                    category__pk__in=category_obj.get_children_ids()
+                )
         return self.queryset
 
 

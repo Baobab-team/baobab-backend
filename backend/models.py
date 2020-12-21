@@ -1,5 +1,7 @@
 import logging
 from datetime import date
+from urllib.parse import urlparse
+
 from autoslug.utils import slugify
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -215,11 +217,8 @@ class SocialLink(BaseModel):
 
     @property
     def type(self):
-        link = getattr(self, "link")
-        for i, name in enumerate(self.TYPES):
-            if name.lower() in link.lower():
-                return name
-        return "unknown"
+        domain = urlparse(str(self.link)).netloc
+        return ".".join(domain.split(".")[1:2])
 
     def __str__(self):
         return self.link
