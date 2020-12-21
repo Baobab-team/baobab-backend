@@ -63,7 +63,7 @@ class TestBusinessEndpoint(APITestCase):
             number="514-555-5555", type="tel", business=self.business3
         )
         self.social_link1 = SocialLink.objects.create(
-            link="www.facebook.com/moi", business=self.business3
+            link="https://www.facebook.com/moi", business=self.business3
         )
         self.address1 = Address.objects.create(
             street_number="123",
@@ -82,7 +82,7 @@ class TestBusinessEndpoint(APITestCase):
         response = self.client.get(self.url)
         businesses = Business.objects.all()
         serializer = BusinessSerializer(businesses, many=True)
-        self.assertEqual(response.data["results"], serializer.data)
+        self.assertEqual(response.data["items"], serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_detail(self):
@@ -141,7 +141,7 @@ class TestBusinessEndpoint(APITestCase):
                 "social_links": [
                     {
                         "id": 1,
-                        "link": "www.facebook.com/moi",
+                        "link": "https://www.facebook.com/moi",
                         "type": "facebook",
                     }
                 ],
@@ -225,7 +225,7 @@ class TestBusinessEndpoint(APITestCase):
                 "accepted_at": None,
                 "payment_types": [],
             },
-            to_dict(response.data["results"][0]),
+            to_dict(response.data["items"][0]),
         )
 
 
