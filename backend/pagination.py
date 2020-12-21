@@ -14,6 +14,6 @@ class DefaultPagination(PageNumberPagination):
                 "previous": self.get_previous_link(),
                 "items_count": self.page.paginator.count,
                 "total_pages": self.page.paginator.num_pages,
-                "results": data,
+                "items": data,
             }
         )

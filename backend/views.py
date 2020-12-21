@@ -82,7 +82,7 @@ class BusinessListView(generics.ListAPIView):
 
     def get_queryset(self):
         exclude_deleted = self.request.query_params.get(
-            "exclude_deleted", None
+            "exclude_deleted", True
         )
         status = self.request.query_params.get("status", None)
         category = self.request.query_params.get("category", None)
