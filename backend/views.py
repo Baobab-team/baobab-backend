@@ -57,7 +57,9 @@ class CategoryListView(generics.ListAPIView):
     def get_queryset(self):
         self.queryset = Category.objects.all()
 
-        if self.request.query_params.get("only_root", False):
+        if self.request.query_params.get(
+            "only_root", True
+        ):  # temporary not optimal
             self.queryset = self.queryset.filter(parent__isnull=True)
 
         return self.queryset
