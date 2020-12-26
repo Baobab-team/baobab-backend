@@ -71,7 +71,7 @@ class TagViewSet(viewsets.ModelViewSet):
     ordering = ["name"]
 
 
-class BusinessListView(generics.ListAPIView):
+class BusinessListView(MultipleFieldLookupMixin, generics.ListAPIView):
     serializer_class = BusinessSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ["name", "tags__name"]
@@ -79,6 +79,7 @@ class BusinessListView(generics.ListAPIView):
     pagination_class = DefaultPagination
     ordering_fields = ["id", "name"]
     ordering = ["name"]
+    lookup_fields = ["pk", "slug"]
 
     def get_queryset(self):
         exclude_deleted = self.request.query_params.get(
@@ -93,7 +94,7 @@ class BusinessListView(generics.ListAPIView):
         if status is None:
             self.queryset = self.queryset.filter(status="accepted")
         if category:
-            category_obj = Category.objects.get(name=category)
+            category_obj = Category.objects.get(slug=category)
             if category_obj:
                 self.queryset = self.queryset.filter(
                     category__pk__in=category_obj.get_children_ids()
