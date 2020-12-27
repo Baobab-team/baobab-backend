@@ -72,6 +72,20 @@ class Category(BaseModel):
                 ids.append(c.id)
         return ids
 
+    def count_businesses(self, include_child=False):
+        count = self.business_set.all().count()
+
+        if not include_child:
+            return count
+
+        for c in self.children.all():
+            if c.children:
+                count = count + c.count_businesses(True)
+            else:
+                count = count + c.business_set.all().count()
+
+        return count
+
     def clean(self):
         if len(self.get_tree()) > self.MAX_LEVEL:
             raise ValidationError(

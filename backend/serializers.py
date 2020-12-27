@@ -33,10 +33,24 @@ class CategorySerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "children",
+            "businesses_count",
+            "businesses_count_without_child",
         ]
 
     slug = serializers.SlugField(read_only=True)
     children = RecursiveField(many=True, read_only=True)
+    businesses_count = serializers.SerializerMethodField(
+        method_name="get_businesses_count"
+    )
+    businesses_count_without_child = serializers.SerializerMethodField(
+        method_name="get_businesses_count_without_child"
+    )
+
+    def get_businesses_count(self, obj):
+        return obj.count_businesses(True)
+
+    def get_businesses_count_without_child(self, obj):
+        return obj.count_businesses()
 
 
 class TagSerializer(serializers.ModelSerializer):
