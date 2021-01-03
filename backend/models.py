@@ -285,3 +285,14 @@ class Address(BaseModel):
         max_length=100, choices=PROVINCES, default=PROVINCES[0][0]
     )
     postal_code = models.CharField(max_length=200)
+
+
+class Suggestion(BaseModel):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    business = models.ForeignKey(
+        Business,
+        on_delete=models.SET_NULL,
+        related_name="suggestion",
+        null=True,
+    )

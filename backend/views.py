@@ -6,13 +6,14 @@ from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.response import Response
 from url_filter.integrations.drf import DjangoFilterBackend
 
-from backend.models import Category, Business, Tag
+from backend.models import Category, Business, Tag, Suggestion
 from backend.pagination import DefaultPagination
 from backend.serializers import (
     UserSerializer,
     CategorySerializer,
     BusinessSerializer,
     TagSerializer,
+    SuggestionSerializer,
 )
 from users.models import CustomUser
 
@@ -168,3 +169,8 @@ class BusinessAutoCompleteView(ListAPIView):
         matching_words = list(matching_words)[0:limit]
         response = Response(matching_words, status=status.HTTP_200_OK)
         return response
+
+
+class SuggestionView(generics.ListCreateAPIView, generics.RetrieveAPIView):
+    queryset = Suggestion.objects.all()
+    serializer_class = SuggestionSerializer

@@ -1,4 +1,6 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
+from django.utils.translation import gettext as _
 
 from backend.models import (
     Category,
@@ -9,6 +11,7 @@ from backend.models import (
     SocialLink,
     OpeningHour,
     PaymentType,
+    Suggestion,
 )
 from users.models import CustomUser
 
@@ -114,3 +117,48 @@ class BusinessSerializer(serializers.ModelSerializer):
             "updated_at",
             "payment_types",
         ]
+
+
+class BusinessCreateSerializer(serializers.ModelSerializer):
+    category = CategorySerializer()
+    phones = PhoneSerializer(many=True, default=[])
+
+    class Meta:
+        model = Business
+        fields = [
+            "id",
+            "name",
+            "phones",
+            "email",
+            "website",
+            "description",
+            "category",
+        ]
+
+
+class SuggestionSerializer(serializers.ModelSerializer):
+    business = BusinessCreateSerializer(many=False)
+
+    class Meta:
+        model = Suggestion
+        fields = [
+            "id",
+            "email",
+            "name",
+            "business",
+        ]
+
+    def create(self, validated_data):
+        business = validated_data.pop("business")
+        category = business.pop("category")
+        try:
+            phones = business.pop("phones")
+            category = Category.objects.get(name=category.get("name"))
+            business = Business.objects.create(category=category, **business)
+            for phone in phones:
+                Phone.objects.create(business=business, **phone)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                detail={"message": _("Unknown category")}, code=400
+            )
+        return Suggestion.objects.create(business=business, **validated_data)

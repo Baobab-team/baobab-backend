@@ -9,6 +9,7 @@ from .views import (
     TagViewSet,
     CategoryView,
     CategoryListView,
+    SuggestionView,
 )
 
 router = routers.DefaultRouter()
@@ -44,5 +45,11 @@ urlpatterns = [
         "categories/<str:slug>/",
         CategoryView.as_view(),
         name="category-detail",
+    ),
+    path("suggestions/", SuggestionView.as_view(), name="suggestion-list",),
+    path(
+        "suggestions/<int:pk>/",
+        SuggestionView.as_view(),
+        name="suggestion-detail",
     ),
 ]

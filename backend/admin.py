@@ -3,7 +3,13 @@ from django.contrib import admin
 # Register your models here.
 from modeltranslation.admin import TranslationAdmin
 
-from backend.forms import BusinessForm, CategoryForm, TagForm, PaymentTypeForm
+from backend.forms import (
+    BusinessForm,
+    CategoryForm,
+    TagForm,
+    PaymentTypeForm,
+    SuggestionForm,
+)
 from backend.models import (
     Category,
     Business,
@@ -13,6 +19,7 @@ from backend.models import (
     Phone,
     SocialLink,
     PaymentType,
+    Suggestion,
 )
 
 
@@ -122,6 +129,7 @@ class BusinessAdmin(TranslationAdmin):
         OpeningHourInline,
         AddressInline,
     ]
+    list_filter = ("status",)
     actions = ["slugify"]
 
     def slugify(self, request, queryset):
@@ -147,3 +155,12 @@ class PaymentTypeAdmin(admin.ModelAdmin):
     model = PaymentType
     form = PaymentTypeForm
     list_display = ("name",)
+
+
+@admin.register(Suggestion)
+class SuggestionAdmin(admin.ModelAdmin):
+    model = Suggestion
+    form = SuggestionForm
+    list_display = ("name", "email")
+    readonly_fields = ("business",)
+    list_filter = ("email",)
