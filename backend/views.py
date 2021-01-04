@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.response import Response
 from url_filter.integrations.drf import DjangoFilterBackend
 
-from backend.models import Category, Business, Tag, Suggestion
+from backend.models import Category, Business, Tag, BusinessSuggestion
 from backend.pagination import DefaultPagination
 from backend.serializers import (
     UserSerializer,
@@ -171,6 +171,13 @@ class BusinessAutoCompleteView(ListAPIView):
         return response
 
 
-class SuggestionView(generics.ListCreateAPIView, generics.RetrieveAPIView):
-    queryset = Suggestion.objects.all()
+class BusinessSuggestionListView(
+    generics.ListCreateAPIView, generics.RetrieveAPIView
+):
+    queryset = BusinessSuggestion.objects.all()
+    serializer_class = SuggestionSerializer
+
+
+class BusinessSuggestionView(generics.RetrieveAPIView):
+    queryset = BusinessSuggestion.objects.all()
     serializer_class = SuggestionSerializer

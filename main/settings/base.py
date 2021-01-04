@@ -28,7 +28,6 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-APPEND_SLASH = True
 
 # Application definition
 

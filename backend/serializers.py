@@ -11,7 +11,7 @@ from backend.models import (
     SocialLink,
     OpeningHour,
     PaymentType,
-    Suggestion,
+    BusinessSuggestion,
 )
 from users.models import CustomUser
 
@@ -140,7 +140,7 @@ class SuggestionSerializer(serializers.ModelSerializer):
     business = BusinessCreateSerializer(many=False)
 
     class Meta:
-        model = Suggestion
+        model = BusinessSuggestion
         fields = [
             "id",
             "email",
@@ -161,4 +161,6 @@ class SuggestionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 detail={"message": _("Unknown category")}, code=400
             )
-        return Suggestion.objects.create(business=business, **validated_data)
+        return BusinessSuggestion.objects.create(
+            business=business, **validated_data
+        )

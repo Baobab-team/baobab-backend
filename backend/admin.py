@@ -19,7 +19,7 @@ from backend.models import (
     Phone,
     SocialLink,
     PaymentType,
-    Suggestion,
+    BusinessSuggestion,
 )
 
 
@@ -157,9 +157,9 @@ class PaymentTypeAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
 
-@admin.register(Suggestion)
+@admin.register(BusinessSuggestion)
 class SuggestionAdmin(admin.ModelAdmin):
-    model = Suggestion
+    model = BusinessSuggestion
     form = SuggestionForm
     list_display = ("name", "email")
     readonly_fields = ("business",)

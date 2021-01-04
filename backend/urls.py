@@ -9,7 +9,8 @@ from .views import (
     TagViewSet,
     CategoryView,
     CategoryListView,
-    SuggestionView,
+    BusinessSuggestionListView,
+    BusinessSuggestionView,
 )
 
 router = routers.DefaultRouter()
@@ -28,6 +29,16 @@ urlpatterns = [
     path(
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
     ),
+    path(
+        "businesses/suggestions/",
+        BusinessSuggestionListView.as_view(),
+        name="business-suggestion-list",
+    ),
+    path(
+        "businesses/suggestions/<int:pk>",
+        BusinessSuggestionView.as_view(),
+        name="business-suggestion-detail",
+    ),
     path("businesses/", BusinessListView.as_view(), name="business-list"),
     path(
         "businesses/<int:pk>/", BusinessView.as_view(), name="business-detail"
@@ -45,11 +56,5 @@ urlpatterns = [
         "categories/<str:slug>/",
         CategoryView.as_view(),
         name="category-detail",
-    ),
-    path("suggestions/", SuggestionView.as_view(), name="suggestion-list",),
-    path(
-        "suggestions/<int:pk>/",
-        SuggestionView.as_view(),
-        name="suggestion-detail",
     ),
 ]

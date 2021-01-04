@@ -287,7 +287,7 @@ class Address(BaseModel):
     postal_code = models.CharField(max_length=200)
 
 
-class Suggestion(BaseModel):
+class BusinessSuggestion(BaseModel):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     business = models.ForeignKey(

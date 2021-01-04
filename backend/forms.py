@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 
 from users.models import CustomUser
-from .models import Category, Business, Tag, PaymentType, Suggestion
+from .models import Category, Business, Tag, PaymentType, BusinessSuggestion
 
 
 class CategoryForm(ModelForm):
@@ -42,5 +42,5 @@ class PaymentTypeForm(ModelForm):
 
 class SuggestionForm(ModelForm):
     class Meta:
-        model = Suggestion
+        model = BusinessSuggestion
         exclude = ["updated_at", "created_at", "deleted_at"]

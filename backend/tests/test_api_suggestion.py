@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from backend.models import Suggestion, Category, BaseModel, Business
+from backend.models import BusinessSuggestion, Category, BaseModel, Business
 from users.models import CustomUser
 
 
@@ -17,7 +17,7 @@ class TestSuggestionEndpoint(APITestCase):
         )
         self.client.force_authenticate(user=self.user)
         self.category = Category.objects.create(name="Restaurant")
-        self.suggestion1 = Suggestion.objects.create(
+        self.suggestion1 = BusinessSuggestion.objects.create(
             name="john",
             email="john.doe@email.com",
             business=Business.objects.create(
@@ -26,7 +26,7 @@ class TestSuggestionEndpoint(APITestCase):
         )
 
     def test_get_all(self):
-        response = self.client.get(reverse("suggestion-list"))
+        response = self.client.get(reverse("business-suggestion-list"))
         self.assertEqual(
             to_dict(response.data),
             [
@@ -53,9 +53,37 @@ class TestSuggestionEndpoint(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_get_by_id(self):
+        response = self.client.get(
+            reverse("business-suggestion-detail", kwargs={"pk": 1})
+        )
+        self.assertEqual(
+            to_dict(response.data),
+            {
+                "id": 1,
+                "name": "john",
+                "email": "john.doe@email.com",
+                "business": {
+                    "id": 1,
+                    "name": "gracia afrika",
+                    "description": "",
+                    "website": "",
+                    "email": "",
+                    "phones": [],
+                    "category": {
+                        "name": "Restaurant",
+                        "slug": "restaurant",
+                        "children": [],
+                        "id": 1,
+                    },
+                },
+            },
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def test_post(self):
         response = self.client.post(
-            reverse("suggestion-list"),
+            reverse("business-suggestion-list"),
             {
                 "name": "john",
                 "email": "john@mail.com",
@@ -100,7 +128,7 @@ class TestSuggestionEndpoint(APITestCase):
 
     def test_post_not_existing_category(self):
         response = self.client.post(
-            reverse("suggestion-list"),
+            reverse("business-suggestion-list"),
             {
                 "name": "john",
                 "email": "john@mail.com",
