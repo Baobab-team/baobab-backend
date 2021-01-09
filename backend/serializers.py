@@ -138,6 +138,7 @@ class BusinessCreateSerializer(serializers.ModelSerializer):
 
 class SuggestionSerializer(serializers.ModelSerializer):
     business = BusinessCreateSerializer(many=False)
+    is_owner = serializers.BooleanField(required=False)
 
     class Meta:
         model = BusinessSuggestion
@@ -145,6 +146,7 @@ class SuggestionSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "name",
+            "is_owner",
             "business",
         ]
 

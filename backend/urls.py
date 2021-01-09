@@ -35,7 +35,7 @@ urlpatterns = [
         name="business-suggestion-list",
     ),
     path(
-        "businesses/suggestions/<int:pk>",
+        "businesses/suggestions/<int:pk>/",
         BusinessSuggestionView.as_view(),
         name="business-suggestion-detail",
     ),

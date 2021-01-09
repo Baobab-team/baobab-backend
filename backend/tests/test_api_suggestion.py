@@ -20,6 +20,7 @@ class TestSuggestionEndpoint(APITestCase):
         self.suggestion1 = BusinessSuggestion.objects.create(
             name="john",
             email="john.doe@email.com",
+            is_owner=True,
             business=Business.objects.create(
                 name="gracia afrika", category=self.category,
             ),
@@ -34,6 +35,7 @@ class TestSuggestionEndpoint(APITestCase):
                     "id": 1,
                     "name": "john",
                     "email": "john.doe@email.com",
+                    "is_owner": True,
                     "business": {
                         "id": 1,
                         "name": "gracia afrika",
@@ -63,6 +65,7 @@ class TestSuggestionEndpoint(APITestCase):
                 "id": 1,
                 "name": "john",
                 "email": "john.doe@email.com",
+                "is_owner": True,
                 "business": {
                     "id": 1,
                     "name": "gracia afrika",
@@ -101,6 +104,7 @@ class TestSuggestionEndpoint(APITestCase):
                 "id": 2,
                 "name": "john",
                 "email": "john@mail.com",
+                "is_owner": False,
                 "business": {
                     "id": 2,
                     "name": "bus1",
@@ -143,7 +147,6 @@ class TestSuggestionEndpoint(APITestCase):
         self.assertEqual(
             to_dict(response.data), {"message": "Unknown category"}
         )
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 

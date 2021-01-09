@@ -161,6 +161,6 @@ class PaymentTypeAdmin(admin.ModelAdmin):
 class SuggestionAdmin(admin.ModelAdmin):
     model = BusinessSuggestion
     form = SuggestionForm
-    list_display = ("name", "email")
-    readonly_fields = ("business",)
-    list_filter = ("email",)
+    list_display = ("name", "email", "is_owner")
+    readonly_fields = ("business", "is_owner")
+    list_filter = ("email", "is_owner")

@@ -290,6 +290,7 @@ class Address(BaseModel):
 class BusinessSuggestion(BaseModel):
     name = models.CharField(max_length=100)
     email = models.EmailField()
+    is_owner = models.BooleanField(default=False)
     business = models.ForeignKey(
         Business,
         on_delete=models.SET_NULL,
