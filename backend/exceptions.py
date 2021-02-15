@@ -15,15 +15,24 @@ def custom_exception_handler(exc, context):
 
         response.data = {}
         errors = []
+
         for field, value in data.items():
-            errors.append("{} : {}".format(field, " ".join(value)))
-        print(type(field))
-        print(type(value))
-        print(value)
+            errors.append(prepare_error_message(field, value))
 
         response.data["errors"] = errors
-        # response.data['status'] = False
-
-        response.data["exception"] = str(exc)
+        response.data["code"] = response.status_code
 
     return response
+
+
+def prepare_error_message(key, value):
+    message = None
+    if isinstance(value, list):
+        message = f"{key}: {''.join(value)}"
+    elif isinstance(value, dict):
+        nested_key = list(value.keys())[0]
+        nested_value = list(value.values())[0]
+        new_key = f"{key}.{nested_key}"
+        message = prepare_error_message(new_key, nested_value)
+
+    return message

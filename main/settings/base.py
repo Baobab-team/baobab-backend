@@ -75,7 +75,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "SEARCH_PARAM": "querySearch",
-    # 'EXCEPTION_HANDLER': 'backend.exceptions.custom_exception_handler'
+    'EXCEPTION_HANDLER': 'backend.exceptions.custom_exception_handler'
 }
 TEMPLATES = [
     {
