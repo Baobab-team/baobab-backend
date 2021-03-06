@@ -18,8 +18,7 @@ def custom_exception_handler(exc, context):
 
         for field, value in data.items():
             errors.append(prepare_error_message(field, value))
-
-        response.data["errors"] = errors
+        response.data["error"] = errors
         response.data["code"] = response.status_code
 
     return response
