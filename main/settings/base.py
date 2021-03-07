@@ -28,7 +28,6 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-APPEND_SLASH = True
 
 # Application definition
 
@@ -76,6 +75,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "SEARCH_PARAM": "querySearch",
+    'EXCEPTION_HANDLER': 'backend.exceptions.custom_exception_handler'
 }
 TEMPLATES = [
     {
