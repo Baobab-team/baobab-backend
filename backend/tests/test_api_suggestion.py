@@ -3,6 +3,7 @@ from json import dumps, loads
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from django.utils.translation import gettext as _
 
 from backend.models import BusinessSuggestion, Category, BaseModel, Business
 from users.models import CustomUser
@@ -22,7 +23,8 @@ class TestSuggestionEndpoint(APITestCase):
             email="john.doe@email.com",
             is_owner=True,
             business=Business.objects.create(
-                name="gracia afrika", category=self.category,
+                name="gracia afrika",
+                category=self.category,
             ),
         )
 
@@ -144,9 +146,8 @@ class TestSuggestionEndpoint(APITestCase):
             },
             format="json",
         )
-        self.assertEqual(
-            to_dict(response.data), {"message": "Unknown category"}
-        )
+        self.assertEqual(response.data.get("code"), 400)
+        self.assertEqual(response.data.get("error"), [_("Unknown category")])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 

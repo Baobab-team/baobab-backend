@@ -9,7 +9,7 @@ def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
     # to get the standard error response.
     response = exception_handler(exc, context)
-
+    # TODO update to handle different type of error
     if response is not None:
         data = response.data
 
@@ -26,7 +26,9 @@ def custom_exception_handler(exc, context):
 
 def prepare_error_message(key, value):
     message = None
-    if isinstance(value, list):
+    if isinstance(value, str):
+        message = f"{value}"
+    elif isinstance(value, list):
         message = f"{key}: {''.join(value)}"
     elif isinstance(value, dict):
         nested_key = list(value.keys())[0]
