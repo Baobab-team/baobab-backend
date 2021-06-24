@@ -15,7 +15,7 @@ import os
 from django.utils.translation import ugettext_lazy as _
 from dotenv import load_dotenv
 
-project_folder = os.path.expanduser('~/dev/baobab/baobab-backend')  # adjust as appropriate
+project_folder = os.path.expanduser('~/baobab-backend')  # adjust as appropriate
 load_dotenv(os.path.join(project_folder, '.env'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,7 +24,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = "users.CustomUser"
 
