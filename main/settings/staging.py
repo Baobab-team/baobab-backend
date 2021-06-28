@@ -2,7 +2,7 @@ from .base import *
 import os
 DEBUG = True
 
-ALLOWED_HOSTS = ['*.pythonanywhere.com']
+ALLOWED_HOSTS = ['.pythonanywhere.com']
 
 DB_NAME = os.getenv("DB_NAME")
 DB_HOST = os.getenv("DB_HOST")
