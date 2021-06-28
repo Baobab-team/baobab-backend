@@ -15,6 +15,8 @@ import os
 from django.utils.translation import ugettext_lazy as _
 from dotenv import load_dotenv
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+
 project_folder = os.path.expanduser('~/baobab-backend')  # adjust as appropriate
 load_dotenv(os.path.join(project_folder, '.env'))
 
