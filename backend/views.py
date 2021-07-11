@@ -88,20 +88,23 @@ class BusinessListView(MultipleFieldLookupMixin, generics.ListAPIView):
         exclude_deleted = self.request.query_params.get(
             "exclude_deleted", True
         )
-        status = self.request.query_params.get("status", None)
+        status = self.request.query_params.get("status", "accepted")
         category = self.request.query_params.get("category", None)
+        accepted_at_after = self.request.query_params.get("accepted_at_after", None)
+
         self.queryset = Business.objects.all()
+        self.queryset = self.queryset.filter(status=status)
 
         if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
-        if status is None:
-            self.queryset = self.queryset.filter(status="accepted")
         if category:
             category_obj = Category.objects.get(slug=category)
             if category_obj:
                 self.queryset = self.queryset.filter(
                     category__pk__in=category_obj.get_children_ids()
                 )
+        if accepted_at_after:
+            self.queryset = self.queryset.filter(accepted_at__gte=accepted_at_after)
         return self.queryset
 
 
