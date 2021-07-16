@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+
 import textdistance
 from django.db.models import Q
 from rest_framework import viewsets, status, filters, generics
@@ -88,20 +90,28 @@ class BusinessListView(MultipleFieldLookupMixin, generics.ListAPIView):
         exclude_deleted = self.request.query_params.get(
             "exclude_deleted", True
         )
-        status = self.request.query_params.get("status", None)
+        status = self.request.query_params.get("status", "accepted")
         category = self.request.query_params.get("category", None)
+        location = self.request.query_params.get("location", None)
+        accepted_at_after = self.request.query_params.get("accepted_at_after", None)
+
         self.queryset = Business.objects.all()
+        self.queryset = self.queryset.filter(status=status)
 
         if exclude_deleted:
             self.queryset = self.queryset.exclude(deleted_at__isnull=False)
-        if status is None:
-            self.queryset = self.queryset.filter(status="accepted")
+        if location:
+            self.queryset = self.queryset.filter(addresses__city__icontains=location)
         if category:
             category_obj = Category.objects.get(slug=category)
             if category_obj:
                 self.queryset = self.queryset.filter(
                     category__pk__in=category_obj.get_children_ids()
                 )
+        if accepted_at_after:
+            formatted_date = datetime.strptime(accepted_at_after, '%Y-%m-%d')
+            self.queryset = self.queryset.filter(accepted_at__gte=formatted_date.date())
+
         return self.queryset
 
 

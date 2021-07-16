@@ -147,7 +147,7 @@ class TestSuggestionEndpoint(APITestCase):
             format="json",
         )
         self.assertEqual(response.data.get("code"), 400)
-        self.assertEqual(response.data.get("error"), [_("Unknown category")])
+        self.assertEqual(response.data.get("message"),_("Unknown category"))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
