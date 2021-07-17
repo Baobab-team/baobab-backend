@@ -11,7 +11,6 @@ from url_filter.integrations.drf import DjangoFilterBackend
 from backend.models import Category, Business, Tag, BusinessSuggestion
 from backend.pagination import DefaultPagination
 from backend.serializers import (
-    UserSerializer,
     CategorySerializer,
     BusinessSerializer,
     TagSerializer,
@@ -39,10 +38,6 @@ class MultipleFieldLookupMixin:
         self.check_object_permissions(self.request, obj)
         return obj
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
 
 
 class CategoryView(MultipleFieldLookupMixin, generics.RetrieveUpdateAPIView):

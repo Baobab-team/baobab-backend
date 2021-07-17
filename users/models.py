@@ -8,10 +8,14 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 
-from .managers import CustomUserManager
+from users.managers import CustomUserManager
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+
+    class Meta:
+        verbose_name = "user"
+        verbose_name_plural = "users"
 
     email = models.EmailField(_("email address"), unique=True)
     first_name = models.CharField(max_length=50, blank=True)
@@ -22,6 +26,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
 
     objects = CustomUserManager()
 
