@@ -103,6 +103,7 @@ class SocialLinkInline(admin.StackedInline):
 class BusinessAdmin(TranslationAdmin):
     model = Business
     form = BusinessForm
+    search_fields = ["name","category__name"]
     list_display = (
         "id",
         "name",
