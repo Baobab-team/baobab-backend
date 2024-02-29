@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import serializers
 from django.utils.translation import gettext as _
+from rest_framework import serializers
 
 from backend.models import (
     Category,
@@ -13,13 +13,6 @@ from backend.models import (
     PaymentType,
     BusinessSuggestion,
 )
-from users.models import CustomUser
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ["email"]
 
 
 class RecursiveField(serializers.Serializer):

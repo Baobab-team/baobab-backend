@@ -1,34 +1,29 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import (
-    UserViewSet,
+from ..views import (
+
     BusinessView,
     BusinessListView,
     BusinessAutoCompleteView,
-    TagViewSet,
     CategoryView,
     CategoryListView,
     BusinessSuggestionListView,
     BusinessSuggestionView,
 )
 
-router = routers.DefaultRouter()
-router.register(r"users", UserViewSet)
-router.register(
-    r"tags", TagViewSet,
-)
+# router = routers.DefaultRouter()
+# router.register(
+#     r"tags", TagViewSet,
+# )
 
 urlpatterns = [
-    path("", include(router.urls)),
     path(
         "businesses/autocomplete",
         BusinessAutoCompleteView.as_view(),
         name="business-autocomplete",
     ),
-    path(
-        "api-auth/", include("rest_framework.urls", namespace="rest_framework")
-    ),
+
     path(
         "businesses/suggestions/",
         BusinessSuggestionListView.as_view(),
